@@ -63,32 +63,12 @@ module timer(
     input middle_p, F, // F is the "First" or start signal
     output R);
 
-    wire [2:0] half_time;
-    counter_3 half_counter (clk, F, half_time);
-
     wire [3:0] full_time;
     counter_4 full_counter (clk, F, full_time);
 
-    assign R = ~&middle_p ? |{&half_time,R,~F} : |{&full_time,R,~F};
+    assign R = ~&middle_p ? |{&full_time[2:0],R,~F} : |{&full_time,R,~F};
 
 endmodule
-
-
-module counter_3(
-    input clk,
-    input reset,      // Synchronous active-high reset
-    output [2:0] q);
-
-    reg S2, S1, S0, S2b, S1b, S0b;
-
-    ff i2 (clk,&{S2^&{S1,S0},~reset},S2,S2b);
-    ff i1 (clk,&{^{S1,S0},~reset},S1,S1b);
-    ff i0 (clk,&{~S0,~reset},S0,S0b);
-
-    assign q = {S2,S1,S0};
-
-endmodule
-
 
 module counter_4(
     input clk,
@@ -112,6 +92,6 @@ module ff (
     output reg Q, Qb);
 
     always @(posedge clk) Q <= D;
-    assign Qb = ~Q;
-    
+    assign Qb = ~Q; 
+
 endmodule

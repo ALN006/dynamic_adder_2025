@@ -54,7 +54,7 @@ module buffer_32(
     input enable,
     output [31:0] out);
 
-    assign out = control ? signal : 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz; // i have no idea if this will actually work
+    assign out = control ? signal : 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz; 
 
 endmodule
 
@@ -66,7 +66,7 @@ module timer(
     wire [3:0] full_time;
     counter_4 full_counter (clk, F, full_time);
 
-    assign R = ~&middle_p ? |{&full_time[2:0],R,~F} : |{&full_time,R,~F};
+    assign R = ~&middle_p ? &{|{full_time[2],R},~F} : &{|{&{full_time[3],full_time[0]},R},~F};
 
 endmodule
 

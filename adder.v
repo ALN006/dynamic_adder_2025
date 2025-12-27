@@ -1,5 +1,5 @@
-module adder_32( 
-    input F, cin,
+module adder_32( //the dynamic adder design 
+    input F, cin, adder_clk,
     input [31:0] a, b,
     output cout,
     output [31:0] sum);
@@ -9,14 +9,14 @@ module adder_32(
 
     bitslices_32 add_logic (.a(a), .b(b), .cin(cin), .cout(cout), .sum(temp_sum), .p(p));
 
-    timer timing_logic (.middle_p(p[17:14]), .F(F), .R(R));
+    timer timing_logic (.clk(adder_clk, ).middle_p(p[17:14]), .F(F), .R(R));
 
     buffer_32 output_buffer (.signal(temp_sum), .enable(R), .out(sum));
 
 endmodule
 
 
-module bitslices_32(
+module bitslices_32(  //instantiates 32 bit slices which are connected ripple carry style
     input [31:0] a, b,
     input cin,
     output cout,
@@ -38,7 +38,7 @@ module bitslices_32(
 endmodule
 
 
-module FA(
+module FA( // dynamic adder bitslice
     input a,b, cin
     output cout, p, s);
 
@@ -49,7 +49,7 @@ module FA(
 endmodule
 
 
-module buffer_32(
+module buffer_32( //32bit tri-state buffer
     input [31:0] signal,
     input enable,
     output [31:0] out);
@@ -59,8 +59,9 @@ module buffer_32(
 endmodule
 
 
-module timer(
-    input middle_p, F, // F is the "First" or start signal
+module timer( //timing logic. limitations -> 1. clk has to be a factor of system clk and greater than three gate delays 2. has the area of approximately 4 bit slices
+    input clk, F, // F is the "First" or start signal
+    input [3:0] middle_p,
     output R);
 
     wire [3:0] full_time;
@@ -79,7 +80,7 @@ module counter_4(
 
     ff i3 (clk,&{S3^&{S2,S1,S0},~reset},S3,S3b);
     ff i2 (clk,&{S2^&{S1,S0},~reset},S2,S2b);
-    ff i1 (clk,&{^{S1,S0},~reset},S1,S1b);
+    ff i1 (clk,&{S1^S0,~reset},S1,S1b);
     ff i0 (clk,&{~S0,~reset},S0,S0b);
 
     assign q = {S3,S2,S1,S0};

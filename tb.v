@@ -1,14 +1,13 @@
 module top_module ();
-	reg clk=0;
-	always #3 clk = ~clk;  // Create clock with period=6
+    
 	initial `probe_start;   // Start the timing diagram
-
-	`probe(clk);        // Probe signal "clk"
 
 	// A testbench
 	reg in=1;
 	initial begin
-		#8 in <= 0;
+		#8 in <= 0 ;
+        #29 in <= 1;
+        #8 in <= 0 ; 
 		$display ("Hello world! The current time is (%0d ps)", $time);
 		#100 $finish;            // Quit the simulation
 	end

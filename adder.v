@@ -39,12 +39,16 @@ endmodule
 
 
 module FA( // dynamic adder bitslice
-    input a,b, cin
-    output cout, p, s);
+    input a,b, Cin
+    output Cout, P, s);
+    parameter nand_d = 1, xor_d = 1; 
 
-    assign p = a^b;
-    assign s = p^cin;
-    assign cout = ~&{~&{a,b},~&{p,cin}};
+    wire nab, nPCin;
+    xor #(xor_d) x0 (P, a, b);
+    xor #(xor_d) x1 (s, P, Cin);
+    nand #(nand_d) n1 (nab, a, b);
+    nand #(nand_d) n2 (nPCin, P, Cin);
+    nand #(nand_d) n3 (Cout, nab, nPCin);
 
 endmodule
 
@@ -59,47 +63,11 @@ module buffer_32( //32bit tri-state buffer
 endmodule
 
 
-module timer( 
-    input clk, F, // F is the "First" or start signal, it is high for the first clock cycle
-    input [5:0] analyzed_p,
-    output R);
-
-    wire [3:0] full_time;
-    counter_4 full_counter (clk, F, full_time);
-
-    assign R = ~&middle_p ? &{|{full_time[2],R},~F} : &{|{&{full_time[3],full_time[0]},R},~F};
-
-endmodule
-
-module counter_3(     // Asynchronous up counter
-    input reset,      // Asynchronous active-high reset
-    output [2:0] q);
-
-    wire S2, S1, S0;
-
-    assign S2 = &{S2^&{S1,S0},~reset};
-    assign S1 = &{S1^&{S0,1'b1},~reset};
-    assign S0 = &{^{1'b1,&{S0,S0}},~reset};
-
-    assign q = {S2,S1,S0};
-
-endmodule
-
-
-module ff (
-    input clk, D,
-    output reg Q, Qb);
-
-    always @(posedge clk) Q <= D;
-    assign Qb = ~Q; 
-
-endmodule
-
 module timer_3(
     input F, // the "first" signal
     output c0,c1,c2
 );
-    parameter and_d = 2, xor_d = 3; 
+    parameter and_d = 1, xor_d = 1; 
     wire xc0, xc1, xc2;
     wire xc0o, xc1o, xc2o;
     wire ac0, ac1, ac2;

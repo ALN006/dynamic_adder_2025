@@ -17,19 +17,19 @@ endmodule
 
 
 module bitslices_32(  //instantiates 32 bit slices which are connected ripple carry style
-    input [31:0] a, b,
-    input cin,
-    output cout,
-    output [31:0] p, sum);
+    input [31:0] A, B,
+    input Cin,
+    output Cout,
+    output [31:0] P, sum);
 
     wire [31:0]carry;
 
-    FA instance1 (a[0],b[0],cin,carry[0],p[0],sum[0]);
+    FA instance1 (A[0],B[0],Cin,carry[0],P[0],sum[0]);
 
     genvar i;
     generate
-        for ( i =1; i < $bits(sum); i++) begin : adder
-            FA u0 (a[i],b[i],carry[i-1],carry[i],p[i],sum[i]);
+        for ( i = 1; i < $bits(sum); i++) begin : adder
+            FA u0 (A[i],B[i],carry[i-1],carry[i],P[i],sum[i]);
         end
     endgenerate
 

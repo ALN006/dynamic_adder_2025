@@ -21,7 +21,7 @@ module bitslices_16(  //instantiates 16 bit slices which are connected ripple ca
     output Cout,
     output [15:0] P, sum);
 
-    wire [15:0]carry;
+    wire [$bits(sum) - 1:0]carry;
 
     FA instance1 (A[0],B[0],Cin,carry[0],P[0],sum[0]);
 
@@ -32,7 +32,7 @@ module bitslices_16(  //instantiates 16 bit slices which are connected ripple ca
         end
     endgenerate
 
-    assign Cout = carry[15];
+    assign Cout = carry[$bits(sum) - 1];
 
     `probe(A);
     `probe(B);
@@ -54,7 +54,6 @@ module FA( // dynamic adder bitslice
     nand #(nand_d) n0 (nbCin, b, Cin);
     nand #(nand_d) n1 (nab, a, b);
     nand #(nand_d) n2 (naCin, a, Cin);
-    and #(0) a1 (temp, nbCin, naCin);
-    nand #(nand_d) n3 (Cout, nab, temp);
+    nand #(nand_d) n3 (Cout, nab, nbCin, naCin);
 
 endmodule

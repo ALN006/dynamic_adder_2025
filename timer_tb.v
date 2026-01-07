@@ -41,4 +41,4 @@ module timer_3(
     `probe(c0);
     `probe(c1);
     `probe(c2);
-endmodul
+endmodule

@@ -33,13 +33,13 @@ module bitslices_32(  //instantiates 32 bit slices which are connected ripple ca
         end
     endgenerate
 
-    assign cout = carry[31];
+    assign Cout = carry[31];
 
 endmodule
 
 
 module FA( // dynamic adder bitslice
-    input a,b, Cin
+    input a,b, Cin,
     output Cout, P, s);
     parameter nand_d = 1, xor_d = 1; 
 
@@ -84,3 +84,42 @@ module timer_3(
     and #(and_d) a1 (ac1, c1, c1);
     and #(and_d) a2 (ac2, c2, c2);
 endmodule
+
+module timing_circuit_16(
+    input [15:0] P, sum,
+    input F,
+    input request,
+    output sum_out
+);
+    parameter nand_d = 1, and_d = 1, nor_d = 1; 
+    wire m0, m1, m2;
+    wire c0, c1, c2;
+    wire 4fourths, 3fourths, 2fourths, 1fourths;
+    wire ready, cready, realease;
+    assign 3fourths = c2;
+    assign 2fourths = c0;
+    and #(and_d) (4fourths, c2, c1);
+    nor #(nor_d) (1fourths, c1, c0);
+    nand #(nand_d) (m0, P[12], P[11]);
+    nand #(nand_d) (m1, P[8], P[7]);
+    nand #(nand_d) (m2, P[4], P[3]);
+    always @(*) begin
+        #2
+        case ({m0,m1,m2})
+            3'b000: ready = 4fourths;
+            3'b001: ready = 3fourths;
+            3'b010: ready = 2fourths;
+            3'b011: ready = 2fourths;
+            3'b100: ready = 3fourths;
+            3'b101: ready = 2fourths;
+            3'b110: ready = 2fourths;
+            3'b111: ready = 1fourths;
+            defalut: ready = 4fourths;
+        endcase
+    end
+    #2 assign cready = &{cready,~F}|ready;
+    assign release = request&cready;
+    timer_3 inst1 (.F(F), .c0(c0), .c1(c1), .c2(c2));
+    buffer_32 inst1 (sum, release, sum_out);
+    
+endmodule   

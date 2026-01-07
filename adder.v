@@ -123,3 +123,27 @@ module timing_circuit_16(
     buffer_32 inst1 (sum, release, sum_out);
     
 endmodule   
+
+module mux_3_8(
+    input [7:0] option,
+    input [2:0] select,
+    input F,
+    output ready
+);
+    parameter nand_d = 1, or_d = 1, and_d = 1;
+    wire [7:0] high_option;
+    wire low, high, capture;
+    nand #(nand_d) n00 (high_option[0], option[0], ~select[2], ~select[1], ~select[0]);
+    nand #(nand_d) n01 (high_option[1], option[1], ~select[2], ~select[1], select[0]);
+    nand #(nand_d) n02 (high_option[2], option[2], ~select[2], select[1], ~select[0]);
+    nand #(nand_d) n03 (high_option[3], option[3], ~select[2], select[1], select[0]);
+    nand #(nand_d) n04 (high_option[4], option[4], select[2], ~select[1], ~select[0]);
+    nand #(nand_d) n05 (high_option[5], option[5], select[2], ~select[1], select[0]);
+    nand #(nand_d) n06 (high_option[6], option[6], select[2], select[1], ~select[0]);
+    nand #(nand_d) n07 (high_option[7], option[7], select[2], select[1], select[0]);
+
+    nand #(nand_d) n10 (low, high_option[3], high_option[2], high_option[1], high_option[0]);
+    nand #(nand_d) n11 (high, high_option[7], high_option[6], high_option[5], high_option[4]);
+    and #(and_d) a20 (capture, ready, ~F);
+    or #(or_d) o20 (ready, high, low, capture);
+endmodule

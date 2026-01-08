@@ -106,7 +106,7 @@ module timing_circuit_16(
     assign a2fourths = c0;
     wire ready;
     mux_3_8 mux ( 
-        .option({a4fourths, a3fourths, a2fourths, a2fourths, a3fourths, a2fourths, a2fourths, a1fourths}),
+        .option({a1fourths, a2fourths, a2fourths, a3fourths, a2fourths, a2fourths, a3fourths, a4fourths}),
         .select({s2, s1, s0}),
         .F(F),
         .out(ready)

@@ -5,7 +5,6 @@ module adder_16( //the dynamic adder design
     output [15:0] sum);
 
     wire [$bits(sum) - 1:0] P, temp_sum; // temp_sum holds sum till ready signal R is 1
-    wire R;
 
     bitslices_16 add_logic (.A(A), .B(B), .Cin(Cin), .Cout(Cout), .sum(temp_sum), .P(P));
 
@@ -89,12 +88,6 @@ module timing_circuit_16(
     wire rlease;
     and #(and_d) (rlease, ready, request);
     buffer_16 sum_buffer (.signal(sum), .enable(rlease), .out(sum_out));
-
-    `probe(P);
-    `probe(sum);
-    `probe(F);
-    `probe(request);
-    `probe(sum_out);
 
 endmodule
 

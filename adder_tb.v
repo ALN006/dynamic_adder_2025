@@ -3,7 +3,7 @@ module top_module ();
 	initial `probe_start;   // Start the timing diagram
 
 	// A testbench
-    reg [15:0] A = 16'hAAAA, B = 16'h5555;
+    reg [15:0] A = 16'h0AAA, B = 16'h0555;
     reg Cin = 0;
     reg request = 1;
     reg F = 1;
@@ -13,7 +13,7 @@ module top_module ();
 		#100 $finish;            // Quit the simulation
 	end
 
-    adder_16 inst1 ( .A(A), .B(B), .Cin(Cin), .F(F), .request(request));   
+    adder_16 dut ( .A(A), .B(B), .Cin(Cin), .F(F), .request(request));   
 
 endmodule
 
@@ -24,22 +24,19 @@ module adder_16( //the dynamic adder design
     output Cout,
     output [15:0] sum);
 
-    wire [15:0] P, temp_sum; // temp_sum holds sum till ready signal Release is 1
+    wire [$bits(sum) - 1:0] P, temp_sum; // temp_sum holds sum till ready signal R is 1
 
     bitslices_16 add_logic (.A(A), .B(B), .Cin(Cin), .Cout(Cout), .sum(temp_sum), .P(P));
 
-    timing_cicuit_16 inst1 (.P(P),.sum(temp_sum), .F(F), .request(request), .sum_out(sum));
-    `probe(Cout)
+    timing_circuit_16 timing_logic (.P(P), .sum(temp_sum), .F(F), .request(request), .sum_out(sum));
 
-endmodule
-
-
-module buffer_16( //16bit tri-state buffer
-    input [15:0] signal,
-    input enable,
-    output [15:0] out);
-
-    assign out = enable ? signal : 16'bzzzzzzzzzzzzzzzz; 
+    `probe(F);
+    `probe(Cin);
+    `probe(request);
+    `probe(A);
+    `probe(B);
+    `probe(Cout);
+    `probe(sum);
 
 endmodule
 
@@ -50,7 +47,7 @@ module bitslices_16(  //instantiates 16 bit slices which are connected ripple ca
     output Cout,
     output [15:0] P, sum);
 
-    wire [15:0]carry;
+    wire [$bits(sum) - 1:0]carry;
 
     FA instance1 (A[0],B[0],Cin,carry[0],P[0],sum[0]);
 
@@ -61,7 +58,8 @@ module bitslices_16(  //instantiates 16 bit slices which are connected ripple ca
         end
     endgenerate
 
-    assign Cout = carry[15];
+    assign Cout = carry[$bits(sum) - 1];
+    `probe(sum);
 
 endmodule
 
@@ -70,15 +68,57 @@ module FA( // dynamic adder bitslice
     output Cout, P, s);
     parameter nand_d = 1, xor_d = 1; 
 
-    wire nab, nPCin;
+    wire nab, naCin, nbCin, temp;
     xor #(xor_d) x0 (P, a, b);
     xor #(xor_d) x1 (s, P, Cin);
+    nand #(nand_d) n0 (nbCin, b, Cin);
     nand #(nand_d) n1 (nab, a, b);
-    nand #(nand_d) n2 (nPCin, P, Cin);
-    nand #(nand_d) n3 (Cout, nab, nPCin);
+    nand #(nand_d) n2 (naCin, a, Cin);
+    nand #(nand_d) n3 (Cout, nab, nbCin, naCin);
 
 endmodule
 
+
+module buffer_16( //16bit tri-state buffer
+    input [15:0] signal,
+    input enable,
+    output [15:0] out);
+
+    assign out = enable ? signal : 16'bzzzzzzzzzzzzzzzz;
+
+endmodule
+
+
+module timing_circuit_16(
+    input [15:0] P, sum,
+    input F,
+    input request,
+    output [15:0] sum_out
+);
+    parameter nand_d = 1, and_d = 1, nor_d = 1;
+    wire s0, s1, s2;
+    nand #(nand_d) n00 (s2, P[12], P[11]);
+    nand #(nand_d) n01 (s1, P[8], P[7]);
+    nand #(nand_d) n02 (s0, P[4], P[3]);
+    wire c0, c1, c2;
+    timer_3 stopwatch (.F(F), .c0(c0), .c1(c1), .c2(c2));
+    wire a4fourths, a3fourths, a2fourths, a1fourths;
+    and #(and_d) a10 (a4fourths, c2, c1);
+    nor #(nor_d) no10 (a1fourths, c2, c1, c0);
+    assign a3fourths = c2;
+    assign a2fourths = c0;
+    wire ready;
+    mux_3_8 mux ( 
+        .option({a1fourths, a2fourths, a2fourths, a3fourths, a2fourths, a2fourths, a3fourths, a4fourths}),
+        .select({s2, s1, s0}),
+        .F(F),
+        .out(ready)
+    );
+    wire rlease;
+    and #(and_d) (rlease, ready, request);
+    buffer_16 sum_buffer (.signal(sum), .enable(rlease), .out(sum_out));
+
+endmodule
 
 module timer_3(
     input F, // the "first" signal
@@ -100,48 +140,30 @@ module timer_3(
     and #(and_d) a0 (ac0, c0, c0);
     and #(and_d) a1 (ac1, c1, c1);
     and #(and_d) a2 (ac2, c2, c2);
+    
 endmodule
 
-
-module timing_circuit_16(
-    input [15:0] P, sum,
+module mux_3_8( // 3*8 mux that captures any selected signal in 3 gate delays so long as it was high for atleast 2 gate delays
+    input [7:0] option,
+    input [2:0] select,
     input F,
-    input request,
-    output [15:0] sum_out
+    output out
 );
-    parameter nand_d = 1, and_d = 1, nor_d = 1; 
-    wire m0, m1, m2;
-    wire c0, c1, c2;
-    wire a4fourths, a3fourths, a2fourths, a1fourths;
-    reg ready, cready, release;
-    assign a3fourths = c2;
-    assign a2fourths = c0;
-    and #(and_d) (a4fourths, c2, c1);
-    nor #(nor_d) (a1fourths, c1, c0);
-    nand #(nand_d) (m0, P[12], P[11]);
-    nand #(nand_d) (m1, P[8], P[7]);
-    nand #(nand_d) (m2, P[4], P[3]);
-    always @(*) begin
-        #2
-        case ({m0,m1,m2})
-            3'b000: ready = a4fourths;
-            3'b001: ready = a3fourths;
-            3'b010: ready = a2fourths;
-            3'b011: ready = a2fourths;
-            3'b100: ready = a3fourths;
-            3'b101: ready = a2fourths;
-            3'b110: ready = a2fourths;
-            3'b111: ready = a1fourths;
-            default: ready = a4fourths;
-        endcase
-    end
-    #2 assign cready = &{cready,~F}|ready;
-    assign release = request&cready;
-    timer_3 inst1 (.F(F), .c0(c0), .c1(c1), .c2(c2));
-    buffer_16 inst1 (sum, release, sum_out);
-    `probe(P);
-    `probe(sum);
-    `probe(F);
-    `probe(request);
-    `probe(sum_out);    
+    parameter nand_d = 1, or_d = 1, and_d = 1;
+    wire [7:0] high_option;
+    wire low, high, capture;
+    nand #(nand_d) n00 (high_option[0], option[0], ~select[2], ~select[1], ~select[0]);
+    nand #(nand_d) n01 (high_option[1], option[1], ~select[2], ~select[1], select[0]);
+    nand #(nand_d) n02 (high_option[2], option[2], ~select[2], select[1], ~select[0]);
+    nand #(nand_d) n03 (high_option[3], option[3], ~select[2], select[1], select[0]);
+    nand #(nand_d) n04 (high_option[4], option[4], select[2], ~select[1], ~select[0]);
+    nand #(nand_d) n05 (high_option[5], option[5], select[2], ~select[1], select[0]);
+    nand #(nand_d) n06 (high_option[6], option[6], select[2], select[1], ~select[0]);
+    nand #(nand_d) n07 (high_option[7], option[7], select[2], select[1], select[0]);
+
+    nand #(nand_d) n10 (low, high_option[3], high_option[2], high_option[1], high_option[0]);
+    nand #(nand_d) n11 (high, high_option[7], high_option[6], high_option[5], high_option[4]);
+    and #(and_d) a20 (capture, out, ~F);
+    or #(or_d) o20 (out, high, low, capture);
+
 endmodule

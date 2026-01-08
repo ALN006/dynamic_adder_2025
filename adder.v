@@ -1,28 +1,26 @@
-module adder_32( //the dynamic adder design 
+module adder_16( //the dynamic adder design 
     input F, Cin, request,
-    input [31:0] A, B,
+    input [15:0] A, B,
     output Cout,
-    output [31:0] sum);
+    output [15:0] sum);
 
-    wire [31:0] P, temp_sum; // temp_sum holds sum till ready signal R is 1
+    wire [$bits(sum) - 1:0] P, temp_sum; // temp_sum holds sum till ready signal R is 1
     wire R;
 
-    bitslices_32 add_logic (.a(A), .b(B), .cin(Cin), .cout(Cout), .sum(temp_sum), .p(P));
+    bitslices_16 add_logic (.A(A), .B(B), .Cin(Cin), .Cout(Cout), .sum(temp_sum), .P(P));
 
-    timer timing_logic (.clk(adder_clk),.middle_p(p[17:14]), .F(F), .R(R));
-
-    buffer_32 output_buffer (.signal(temp_sum), .enable(R), .out(sum));
+    timer timing_circuit_16 (.P(P), .sum(temp_sum), .F(F), .request(request), .sum_out(sum));
 
 endmodule
 
 
-module bitslices_32(  //instantiates 32 bit slices which are connected ripple carry style
-    input [31:0] A, B,
+module bitslices_16(  //instantiates 16 bit slices which are connected ripple carry style
+    input [15:0] A, B,
     input Cin,
     output Cout,
-    output [31:0] P, sum);
+    output [15:0] P, sum);
 
-    wire [31:0]carry;
+    wire [$bits(sum) - 1:0]carry;
 
     FA instance1 (A[0],B[0],Cin,carry[0],P[0],sum[0]);
 
@@ -33,22 +31,22 @@ module bitslices_32(  //instantiates 32 bit slices which are connected ripple ca
         end
     endgenerate
 
-    assign Cout = carry[31];
+    assign Cout = carry[$bits(sum) - 1];
 
 endmodule
-
 
 module FA( // dynamic adder bitslice
     input a,b, Cin,
     output Cout, P, s);
     parameter nand_d = 1, xor_d = 1; 
 
-    wire nab, nPCin;
+    wire nab, naCin, nbCin, temp;
     xor #(xor_d) x0 (P, a, b);
     xor #(xor_d) x1 (s, P, Cin);
+    nand #(nand_d) n0 (nbCin, b, Cin);
     nand #(nand_d) n1 (nab, a, b);
-    nand #(nand_d) n2 (nPCin, P, Cin);
-    nand #(nand_d) n3 (Cout, nab, nPCin);
+    nand #(nand_d) n2 (naCin, a, Cin);
+    nand #(nand_d) n3 (Cout, nab, nbCin, naCin);
 
 endmodule
 
@@ -58,33 +56,10 @@ module buffer_16( //16bit tri-state buffer
     input enable,
     output [15:0] out);
 
-    assign out = enable ? signal : 16'bzzzzzzzzzzzzzzzz; 
+    assign out = enable ? signal : 16'bzzzzzzzzzzzzzzzz;
 
 endmodule
 
-
-module timer_3(
-    input F, // the "first" signal
-    output c0,c1,c2
-);
-    parameter and_d = 1, xor_d = 1; 
-    wire xc0, xc1, xc2;
-    wire xc0o, xc1o, xc2o;
-    wire ac0, ac1, ac2;
-    assign xc0o = 1'b1;
-    and #(and_d) a001 (xc1o, 1'b1, c0);
-    and #(and_d) a002 (xc2o, c0, c1);
-    xor #(xor_d) x0 (xc0, ac0, xc0o);
-    xor #(xor_d) x1 (xc1, ac1, xc1o);
-    xor #(xor_d) x2 (xc2, ac2, xc2o);
-    and #(and_d) a00 (c0, xc0, ~F);
-    and #(and_d) a01 (c1, xc1, ~F);
-    and #(and_d) a02 (c2, xc2, ~F);
-    and #(and_d) a0 (ac0, c0, c0);
-    and #(and_d) a1 (ac1, c1, c1);
-    and #(and_d) a2 (ac2, c2, c2);
-    
-endmodule
 
 module timing_circuit_16(
     input [15:0] P, sum,
@@ -115,7 +90,36 @@ module timing_circuit_16(
     and #(and_d) (rlease, ready, request);
     buffer_16 sum_buffer (.signal(sum), .enable(rlease), .out(sum_out));
 
-endmodule   
+    `probe(P);
+    `probe(sum);
+    `probe(F);
+    `probe(request);
+    `probe(sum_out);
+
+endmodule
+
+module timer_3(
+    input F, // the "first" signal
+    output c0,c1,c2
+);
+    parameter and_d = 1, xor_d = 1; 
+    wire xc0, xc1, xc2;
+    wire xc0o, xc1o, xc2o;
+    wire ac0, ac1, ac2;
+    assign xc0o = 1'b1;
+    and #(and_d) a001 (xc1o, 1'b1, c0);
+    and #(and_d) a002 (xc2o, c0, c1);
+    xor #(xor_d) x0 (xc0, ac0, xc0o);
+    xor #(xor_d) x1 (xc1, ac1, xc1o);
+    xor #(xor_d) x2 (xc2, ac2, xc2o);
+    and #(and_d) a00 (c0, xc0, ~F);
+    and #(and_d) a01 (c1, xc1, ~F);
+    and #(and_d) a02 (c2, xc2, ~F);
+    and #(and_d) a0 (ac0, c0, c0);
+    and #(and_d) a1 (ac1, c1, c1);
+    and #(and_d) a2 (ac2, c2, c2);
+    
+endmodule
 
 module mux_3_8( // 3*8 mux that captures any selected signal in 3 gate delays so long as it was high for atleast 2 gate delays
     input [7:0] option,

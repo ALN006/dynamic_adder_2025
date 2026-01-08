@@ -17,6 +17,7 @@ module top_module ();
 
 endmodule
 
+
 module mux_3_8( // 3*8 mux that captures any selected signal in 3 gate delays so long as it was high for atleast 2 gate delays
     input [7:0] option,
     input [2:0] select,

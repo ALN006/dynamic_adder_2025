@@ -53,12 +53,12 @@ module FA( // dynamic adder bitslice
 endmodule
 
 
-module buffer_32( //32bit tri-state buffer
-    input [31:0] signal,
+module buffer_16( //16bit tri-state buffer
+    input [15:0] signal,
     input enable,
-    output [31:0] out);
+    output [15:0] out);
 
-    assign out = control ? signal : 32'bzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz; 
+    assign out = enable ? signal : 16'bzzzzzzzzzzzzzzzz; 
 
 endmodule
 
@@ -83,52 +83,45 @@ module timer_3(
     and #(and_d) a0 (ac0, c0, c0);
     and #(and_d) a1 (ac1, c1, c1);
     and #(and_d) a2 (ac2, c2, c2);
+    
 endmodule
 
 module timing_circuit_16(
     input [15:0] P, sum,
     input F,
     input request,
-    output sum_out
+    output [15:0] sum_out
 );
-    parameter nand_d = 1, and_d = 1, nor_d = 1; 
-    wire m0, m1, m2;
+    parameter nand_d = 1, and_d = 1, nor_d = 1;
+    wire s0, s1, s2;
+    nand #(nand_d) n00 (s2, P[12], P[11]);
+    nand #(nand_d) n01 (s1, P[8], P[7]);
+    nand #(nand_d) n02 (s0, P[4], P[3]);
     wire c0, c1, c2;
-    wire 4fourths, 3fourths, 2fourths, 1fourths;
-    wire ready, cready, realease;
-    assign 3fourths = c2;
-    assign 2fourths = c0;
-    and #(and_d) (4fourths, c2, c1);
-    nor #(nor_d) (1fourths, c1, c0);
-    nand #(nand_d) (m0, P[12], P[11]);
-    nand #(nand_d) (m1, P[8], P[7]);
-    nand #(nand_d) (m2, P[4], P[3]);
-    always @(*) begin
-        #2
-        case ({m0,m1,m2})
-            3'b000: ready = 4fourths;
-            3'b001: ready = 3fourths;
-            3'b010: ready = 2fourths;
-            3'b011: ready = 2fourths;
-            3'b100: ready = 3fourths;
-            3'b101: ready = 2fourths;
-            3'b110: ready = 2fourths;
-            3'b111: ready = 1fourths;
-            defalut: ready = 4fourths;
-        endcase
-    end
-    #2 assign cready = &{cready,~F}|ready;
-    assign release = request&cready;
-    timer_3 inst1 (.F(F), .c0(c0), .c1(c1), .c2(c2));
-    buffer_32 inst1 (sum, release, sum_out);
-    
+    timer_3 stopwatch (.F(F), .c0(c0), .c1(c1), .c2(c2));
+    wire a4fourths, a3fourths, a2fourths, a1fourths;
+    and #(and_d) a10 (a4fourths, c2, c1);
+    nor #(nor_d) no10 (a1fourths, c2, c1, c0);
+    assign a3fourths = c2;
+    assign a2fourths = c0;
+    wire ready;
+    mux_3_8 mux ( 
+        .option({a4fourths, a3fourths, a2fourths, a2fourths, a3fourths, a2fourths, a2fourths, a1fourths}),
+        .select({s2, s1, s0}),
+        .F(F),
+        .out(ready)
+    );
+    wire rlease;
+    and #(and_d) (rlease, ready, request);
+    buffer_16 sum_buffer (.signal(sum), .enable(rlease), .out(sum_out));
+
 endmodule   
 
-module mux_3_8(
+module mux_3_8( // 3*8 mux that captures any selected signal in 3 gate delays so long as it was high for atleast 2 gate delays
     input [7:0] option,
     input [2:0] select,
     input F,
-    output ready
+    output out
 );
     parameter nand_d = 1, or_d = 1, and_d = 1;
     wire [7:0] high_option;
@@ -144,6 +137,7 @@ module mux_3_8(
 
     nand #(nand_d) n10 (low, high_option[3], high_option[2], high_option[1], high_option[0]);
     nand #(nand_d) n11 (high, high_option[7], high_option[6], high_option[5], high_option[4]);
-    and #(and_d) a20 (capture, ready, ~F);
-    or #(or_d) o20 (ready, high, low, capture);
+    and #(and_d) a20 (capture, out, ~F);
+    or #(or_d) o20 (out, high, low, capture);
+
 endmodule

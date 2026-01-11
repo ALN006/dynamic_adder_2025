@@ -6,7 +6,7 @@ class wire(object):
     def __init__(self, signal: np.array) -> wire: #constructor
         self.signal = signal #signal is a list of pointers (indexs in wire.values)
     
-    @classmethod # alternative contructor that takes human readable signal r_signal
+    @classmethod # alternative contructor that takes human readable signal r_signal 
     def from_r_signal(cls, r_signal):
         signal = np.array([])
         for bit in r_signal:

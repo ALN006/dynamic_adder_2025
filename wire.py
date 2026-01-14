@@ -1,4 +1,3 @@
-import numpy as np # a numpy array is an array that supports index-wise math
 class wire(object):
     ''' 
     a wire is a set of chanels that can each posses a voltage so as to carry fixed size indexed signals (order matters)
@@ -41,7 +40,7 @@ class wire(object):
 
     def is_01(self,index: int) -> bool: #checker
         ''' returns true if the values at index is 0 or 1'''
-        return self.signal[index] in [0,1]
+        return self.signal[index] in ["0","1"]
 
     def __mul__(self,other: wire) -> wire: #AND gate
         '''allows A*B to mean A and B'''

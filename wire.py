@@ -14,13 +14,13 @@ class wire(object):
         ''' creates wire object self with some initial signal '''
         self.signal  = signal
 
-    def read(self) -> np.array: #getter
+    def read(self) -> list: #getter
         ''' returns the signal held in our wire'''
         return self.signal
     def __getitem__(self,index: int) -> int: #syntactic sugar
         ''' allows the statement wire2 = wire1[index] '''
         return wire([self.signal[index]])
-    def __getslice__(self,i: int = 0, j: int = -1) -> np.array: #syntactic sugar
+    def __getslice__(self,i: int = 0, j: int = -1) -> list: #syntactic sugar
         ''' allows the statement wire2 = wire1[i:j] '''
         return wire(self.signal[i:j])
     def __setitem__(self, index: int, value: str) -> None: #setter

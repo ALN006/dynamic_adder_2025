@@ -31,10 +31,10 @@ class wire(object):
         self.signal[i:j] = values
     def __str__(self) -> str: #for display
         ''' returns signal carried as a string '''
-        return str(wire.values[pointer] for pointer in self.signal)
+        return "".join(self.signal)
     def __repr__(self) -> str: #for debugging
         ''' returns the python statement that created self'''
-        return f"wire.__init__(self,{self.signal})"
+        return f"wire({self.signal})"
     def __len__(self): #len()
         ''' retruns length of the signal carried by wire'''
         return len(self.signal)
@@ -45,7 +45,7 @@ class wire(object):
 
     def __mul__(self,other: wire) -> wire: #AND gate
         '''allows A*B to mean A and B'''
-        AND = {
+        AND = { #there are just too many edge cases for this and other gates to not be straight dicts
             "00": "0", "01": "0", "0X": "0", "0Z": "0",
             "10": "0", "11": "1", "1X": "X", "1Z": "Z",
             "X0": "0", "X1": "X", "XX": "X", "XZ": "Z", #a safe choice for XZ
@@ -53,5 +53,5 @@ class wire(object):
         }
         return wire([AND[self.signal[i] + other.signal[i]] for i in range(len(self))])
     
-#     #future work -> all other gates, support gate delays
+    #future work -> all other gates, support gate delays
     

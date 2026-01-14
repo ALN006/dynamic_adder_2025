@@ -1,59 +1,57 @@
-import numpy as np # a numpy arrat is just an arry that supports partwise math, so a + b = another array c of the same length where c[i] = a[i] + b[i]
+import numpy as np # a numpy array is an array that supports index-wise math
 class wire(object):
+    ''' 
+    a wire is a set of chanels that can each posses a voltage so as to carry fixed size indexed signals (order matters)
+    the encoding at indexes is as follows:
+        0 -> ground/minumum voltage
+        1 -> maximum voltage 
+        X -> dont care if it is 0 or 1 but it is one of the 2
+        Z -> high impedance i.e. a voltage value between max and min that is not capable of activating CMOS transistors
 
-    values = [0,1,"X", "Z"] #all wire will be arrays that point to a value in values, i suppose this can be all chars if we wanted
+    this class models wires for the purposes of larger ciruit simulations 
+    '''
 
-    """
-    parametrized constructor, initialise signal as either string or an array where each index of the structure is values[i]
-    """
-    def __init__(self, signal: np.array) -> wire: #constructor
-        self.signal = signal #signal is a list of pointers (indexs in wire.values)
-    
-    """
-    pc #2, define signal from normal data im guessing; like encoding maybe?
-    """
-    @classmethod # alternative contructor that takes human readable signal r_signal 
-    def from_r_signal(cls, r_signal):
-        signal = np.array([])
-        for bit in r_signal:
-            for index,value in enumerate(wire.values):
-                if bit == value:
-                    signal = np.append(signal,index)
-        return cls(signal)
+    def __init__(self, signal: list) -> wire: #constructor
+        ''' creates wire object self with some initial signal '''
+        self.signal  = signal
 
-    """getter"""
-    def read(self) -> np.array: return self.signal #internal read for developer use
+    def read(self) -> np.array: #getter
+        ''' returns the signal held in our wire'''
+        return self.signal
+    def __getitem__(self,index: int) -> int: #syntactic sugar
+        ''' allows the statement wire2 = wire1[index] '''
+        return wire([self.signal[index]])
+    def __getslice__(self,i: int = 0, j: int = -1) -> np.array: #syntactic sugar
+        ''' allows the statement wire2 = wire1[i:j] '''
+        return wire(self.signal[i:j])
+    def __setitem__(self, index: int, value: str) -> None: #setter
+        ''' allows the statement wire1[index] = value'''
+        self.signal[index] = value
+    def __setslice__(self, i: int = 0, j: int = -1, values: list = []) -> None: #setter
+        self.signal[i:j] = values
+    def __str__(self) -> str: #for display
+        ''' returns signal carried as a string '''
+        return str(wire.values[pointer] for pointer in self.signal)
+    def __repr__(self) -> str: #for debugging
+        ''' returns the python statement that created self'''
+        return f"wire.__init__(self,{self.signal})"
+    def __len__(self): #len()
+        ''' retruns length of the signal carried by wire'''
+        return len(self.signal)
 
-    """another getter but seems useless? idk. can always just do read().at(i);"""
-    def __getitem__(self, index: int) -> int: return self.signal[index] #allows index access
-    
-    """same idea as getitem, can just slice object returned by read"""
-    def __getslice__(self, i: int = 0, j: int = -1) -> np.array: return self.signal[i:j] #allows index slic access 
-    
-    """peak confusion, what is being printed"""
-    def __str__(self) -> str: return str([wire.values[pointer] for pointer in self.signal]) # for printing
-    
-    """is this for testing? if it's not relevant to the actual simulation, then this is useless, can use catch2 framework instead"""
-    def __repr__(self) -> str: return f"wire.__init__(self,{self.signal})" #for debugging, returns the constructor the created the object with bugs
-    
-    """?????? what even is this vro, isn't it just the first param constructor"""
-    def write(self, signal: np.array) -> None: self.signal = signal #internal wirte for developer use
+    def is_01(self,index: int) -> bool: #checker
+        ''' returns true if the values at index is 0 or 1'''
+        return self.signal[index] in [0,1]
 
-    """isnt this the same as one of the constructors??"""
-    def assign(self, r_signal: np.array) -> None: #for application users to input initial signal values
-        self.signal = np.array([])
-        for bit in r_signal:
-            for index,value in enumerate(wire.values):
-                if bit == value:
-                    self.signal = np.append(self.signal,index) # this is probably inefficient but i cant put my finger on why
-
-    """ idk what this is again """
-    def is_01(self,index: int) -> bool: # just usefull
-        return wire.values[self.signal[index]] in [0,1]
+    def __mul__(self,other: wire) -> wire: #AND gate
+        '''allows A*B to mean A and B'''
+        AND = {
+            "00": "0", "01": "0", "0X": "0", "0Z": "0",
+            "10": "0", "11": "1", "1X": "X", "1Z": "Z",
+            "X0": "0", "X1": "X", "XX": "X", "XZ": "Z", #a safe choice for XZ
+            "Z0": "0", "Z1": "Z", "ZX": "Z", "ZZ": "Z"
+        }
+        return wire([AND[self.signal[i] + other.signal[i]] for i in range(len(self))])
     
-    """you can use characters and just convert it bro its not hard to type cast genuinely"""
-    def __mul__(self,other): #the AND operation, supported perfectly, this is why i didnt want to directly use chars directly
-        return (self.signal)*(other.signal)
-    
-    #future work -> all other gates, support gate delays
+#     #future work -> all other gates, support gate delays
     

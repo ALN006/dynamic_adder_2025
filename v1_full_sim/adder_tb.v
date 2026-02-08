@@ -1,19 +1,23 @@
-module top_module ();
+`timescale 1ns/1ns
+
+module adder_tb;
     
-	initial `probe_start;   // Start the timing diagram
+	//initial `probe_start;   // Start the timing diagram
 
 	// A testbench
-    reg [15:0] A = 16'h0AAA, B = 16'h0555;
-    reg Cin = 0;
+    reg [15:0] A = 16'hAAAA, B = 16'h5555, sum;
+    reg Cin = 0, Cout;
     reg request = 1;
     reg F = 1;
 	initial begin
-        #8 F <= 0;
+        $dumpfile("adder_tb.vcd"); // will hold our output waveform 
+        $dumpvars(0, adder_tb);
+        #8 F = 0;
 		$display ("Hello world! The current time is (%0d ps)", $time);
 		#100 $finish;            // Quit the simulation
 	end
 
-    adder_16 dut ( .A(A), .B(B), .Cin(Cin), .F(F), .request(request));   
+    adder_16 dut ( .A(A), .B(B), .Cin(Cin), .F(F), .request(request), .Cout(Cout), .sum(sum));   
 
 endmodule
 
@@ -29,14 +33,6 @@ module adder_16( //the dynamic adder design
     bitslices_16 add_logic (.A(A), .B(B), .Cin(Cin), .Cout(Cout), .sum(temp_sum), .P(P));
 
     timing_circuit_16 timing_logic (.P(P), .sum(temp_sum), .F(F), .request(request), .sum_out(sum));
-
-    `probe(F);
-    `probe(Cin);
-    `probe(request);
-    `probe(A);
-    `probe(B);
-    `probe(Cout);
-    `probe(sum);
 
 endmodule
 
@@ -59,7 +55,6 @@ module bitslices_16(  //instantiates 16 bit slices which are connected ripple ca
     endgenerate
 
     assign Cout = carry[$bits(sum) - 1];
-    `probe(sum);
 
 endmodule
 

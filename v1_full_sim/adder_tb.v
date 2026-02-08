@@ -1,23 +1,39 @@
 `timescale 1ns/1ns
 
 module adder_tb;
-    
-	//initial `probe_start;   // Start the timing diagram
 
-	// A testbench
-    reg [15:0] A = 16'hAAAA, B = 16'h5555, sum;
-    reg Cin = 0, Cout;
+	// inputs and outputs
+    reg [15:0] A, B; 
+    wire [15:0] sum;
+    reg Cin; 
+    wire Cout;
     reg request = 1;
-    reg F = 1;
+    reg F;
+
+    // simulation vars
+    integer run_time = 0;
+
+    // design under test
+    adder_16 dut ( .A(A), .B(B), .Cin(Cin), .F(F), .request(request), .Cout(Cout), .sum(sum));
+
+    // the block where you check for/assign stuff continously
+    always begin               
+        #1;
+        if ((^sum === 1'bx)||F) begin
+            run_time = run_time + 1;
+        end
+    end
+    
+    //the block where you control inouts
 	initial begin
         $dumpfile("adder_tb.vcd"); // will hold our output waveform 
         $dumpvars(0, adder_tb);
-        #8 F = 0;
-		$display ("Hello world! The current time is (%0d ps)", $time);
-		#100 $finish;            // Quit the simulation
-	end
-
-    adder_16 dut ( .A(A), .B(B), .Cin(Cin), .F(F), .request(request), .Cout(Cout), .sum(sum));   
+        repeat (10) begin
+            F = 1; A = $random; B = $random; Cin = $random; #8; F = 0; #25; //truncation will happen, that is expected and intended
+        end
+        $display("Simulation done, runtime was %0d gate delays", run_time);
+        $finish;            // Quit the simulation
+	end   
 
 endmodule
 

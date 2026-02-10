@@ -11,7 +11,7 @@ module RCA #(parameter N = 8) (A, B, Cin, Cout, P, S);
     output Cout;
     output [N-1: 0] P, S;
 
-    //internal rippleh carry wiring
+    //internal ripple carry wiring
     wire [N-1:0] C;
 
     //instantiating bitslices

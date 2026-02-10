@@ -2,6 +2,7 @@
 
 //imports
 `include "RCA.v"
+`include "FA.v" 
 
 module RCA_tb;
 

@@ -1,4 +1,5 @@
-`include "FA.v"
+// imports to add in top module
+// `include "FA.v"
 
 module RCA #(parameter N = 8) (A, B, Cin, Cout, P, S);
 

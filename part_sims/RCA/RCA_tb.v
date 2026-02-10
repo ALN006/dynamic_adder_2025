@@ -18,6 +18,7 @@ module RCA_tb;
     //testing variables
     reg [N:0] expected_sum;
     integer run_time = 0; 
+    integer seed = 42; //for reproducibility of random input cases
 
     //instatiating the design under test
     RCA #(.N(N)) dut (.A(A), .B(B), .Cin(Cin), .Cout(Cout), .P(P), .S(S));
@@ -37,7 +38,7 @@ module RCA_tb;
         $dumpvars(0, RCA_tb);
 
         repeat (10000) begin
-            A = $random; B = $random; Cin = $random; //truncation of random is intended
+            A = $random(seed); B = $random(seed); Cin = $random(seed); //truncation of random is intended
             expected_sum = A + B + Cin;
             #(2*N + 1);
             if ({Cout, S} !== expected_sum) begin

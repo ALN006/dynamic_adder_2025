@@ -1,0 +1,722 @@
+$date
+	Tue Feb 10 15:24:57 2026
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ns
+$end
+$scope module specific_RCA_tb $end
+$var wire 16 ! S [15:0] $end
+$var wire 16 " P [15:0] $end
+$var wire 1 # Cout $end
+$var parameter 32 $ N $end
+$var reg 16 % A [15:0] $end
+$var reg 16 & B [15:0] $end
+$var reg 1 ' Cin $end
+$var reg 17 ( expected_sum [16:0] $end
+$var integer 32 ) run_time [31:0] $end
+$scope module dut $end
+$var wire 16 * A [15:0] $end
+$var wire 16 + B [15:0] $end
+$var wire 1 ' Cin $end
+$var wire 16 , S [15:0] $end
+$var wire 16 - P [15:0] $end
+$var wire 1 # Cout $end
+$var wire 16 . C [15:0] $end
+$var parameter 32 / N $end
+$scope begin adder[1] $end
+$var parameter 2 0 i $end
+$scope module u0 $end
+$var wire 1 1 Cin $end
+$var wire 1 2 Cout $end
+$var wire 1 3 P $end
+$var wire 1 4 S $end
+$var wire 1 5 a $end
+$var wire 1 6 b $end
+$var wire 1 7 naCin $end
+$var wire 1 8 nab $end
+$var wire 1 9 nbCin $end
+$var parameter 32 : nand_d $end
+$var parameter 32 ; xor_d $end
+$upscope $end
+$upscope $end
+$scope begin adder[2] $end
+$var parameter 3 < i $end
+$scope module u0 $end
+$var wire 1 = Cin $end
+$var wire 1 > Cout $end
+$var wire 1 ? P $end
+$var wire 1 @ S $end
+$var wire 1 A a $end
+$var wire 1 B b $end
+$var wire 1 C naCin $end
+$var wire 1 D nab $end
+$var wire 1 E nbCin $end
+$var parameter 32 F nand_d $end
+$var parameter 32 G xor_d $end
+$upscope $end
+$upscope $end
+$scope begin adder[3] $end
+$var parameter 3 H i $end
+$scope module u0 $end
+$var wire 1 I Cin $end
+$var wire 1 J Cout $end
+$var wire 1 K P $end
+$var wire 1 L S $end
+$var wire 1 M a $end
+$var wire 1 N b $end
+$var wire 1 O naCin $end
+$var wire 1 P nab $end
+$var wire 1 Q nbCin $end
+$var parameter 32 R nand_d $end
+$var parameter 32 S xor_d $end
+$upscope $end
+$upscope $end
+$scope begin adder[4] $end
+$var parameter 4 T i $end
+$scope module u0 $end
+$var wire 1 U Cin $end
+$var wire 1 V Cout $end
+$var wire 1 W P $end
+$var wire 1 X S $end
+$var wire 1 Y a $end
+$var wire 1 Z b $end
+$var wire 1 [ naCin $end
+$var wire 1 \ nab $end
+$var wire 1 ] nbCin $end
+$var parameter 32 ^ nand_d $end
+$var parameter 32 _ xor_d $end
+$upscope $end
+$upscope $end
+$scope begin adder[5] $end
+$var parameter 4 ` i $end
+$scope module u0 $end
+$var wire 1 a Cin $end
+$var wire 1 b Cout $end
+$var wire 1 c P $end
+$var wire 1 d S $end
+$var wire 1 e a $end
+$var wire 1 f b $end
+$var wire 1 g naCin $end
+$var wire 1 h nab $end
+$var wire 1 i nbCin $end
+$var parameter 32 j nand_d $end
+$var parameter 32 k xor_d $end
+$upscope $end
+$upscope $end
+$scope begin adder[6] $end
+$var parameter 4 l i $end
+$scope module u0 $end
+$var wire 1 m Cin $end
+$var wire 1 n Cout $end
+$var wire 1 o P $end
+$var wire 1 p S $end
+$var wire 1 q a $end
+$var wire 1 r b $end
+$var wire 1 s naCin $end
+$var wire 1 t nab $end
+$var wire 1 u nbCin $end
+$var parameter 32 v nand_d $end
+$var parameter 32 w xor_d $end
+$upscope $end
+$upscope $end
+$scope begin adder[7] $end
+$var parameter 4 x i $end
+$scope module u0 $end
+$var wire 1 y Cin $end
+$var wire 1 z Cout $end
+$var wire 1 { P $end
+$var wire 1 | S $end
+$var wire 1 } a $end
+$var wire 1 ~ b $end
+$var wire 1 !" naCin $end
+$var wire 1 "" nab $end
+$var wire 1 #" nbCin $end
+$var parameter 32 $" nand_d $end
+$var parameter 32 %" xor_d $end
+$upscope $end
+$upscope $end
+$scope begin adder[8] $end
+$var parameter 5 &" i $end
+$scope module u0 $end
+$var wire 1 '" Cin $end
+$var wire 1 (" Cout $end
+$var wire 1 )" P $end
+$var wire 1 *" S $end
+$var wire 1 +" a $end
+$var wire 1 ," b $end
+$var wire 1 -" naCin $end
+$var wire 1 ." nab $end
+$var wire 1 /" nbCin $end
+$var parameter 32 0" nand_d $end
+$var parameter 32 1" xor_d $end
+$upscope $end
+$upscope $end
+$scope begin adder[9] $end
+$var parameter 5 2" i $end
+$scope module u0 $end
+$var wire 1 3" Cin $end
+$var wire 1 4" Cout $end
+$var wire 1 5" P $end
+$var wire 1 6" S $end
+$var wire 1 7" a $end
+$var wire 1 8" b $end
+$var wire 1 9" naCin $end
+$var wire 1 :" nab $end
+$var wire 1 ;" nbCin $end
+$var parameter 32 <" nand_d $end
+$var parameter 32 =" xor_d $end
+$upscope $end
+$upscope $end
+$scope begin adder[10] $end
+$var parameter 5 >" i $end
+$scope module u0 $end
+$var wire 1 ?" Cin $end
+$var wire 1 @" Cout $end
+$var wire 1 A" P $end
+$var wire 1 B" S $end
+$var wire 1 C" a $end
+$var wire 1 D" b $end
+$var wire 1 E" naCin $end
+$var wire 1 F" nab $end
+$var wire 1 G" nbCin $end
+$var parameter 32 H" nand_d $end
+$var parameter 32 I" xor_d $end
+$upscope $end
+$upscope $end
+$scope begin adder[11] $end
+$var parameter 5 J" i $end
+$scope module u0 $end
+$var wire 1 K" Cin $end
+$var wire 1 L" Cout $end
+$var wire 1 M" P $end
+$var wire 1 N" S $end
+$var wire 1 O" a $end
+$var wire 1 P" b $end
+$var wire 1 Q" naCin $end
+$var wire 1 R" nab $end
+$var wire 1 S" nbCin $end
+$var parameter 32 T" nand_d $end
+$var parameter 32 U" xor_d $end
+$upscope $end
+$upscope $end
+$scope begin adder[12] $end
+$var parameter 5 V" i $end
+$scope module u0 $end
+$var wire 1 W" Cin $end
+$var wire 1 X" Cout $end
+$var wire 1 Y" P $end
+$var wire 1 Z" S $end
+$var wire 1 [" a $end
+$var wire 1 \" b $end
+$var wire 1 ]" naCin $end
+$var wire 1 ^" nab $end
+$var wire 1 _" nbCin $end
+$var parameter 32 `" nand_d $end
+$var parameter 32 a" xor_d $end
+$upscope $end
+$upscope $end
+$scope begin adder[13] $end
+$var parameter 5 b" i $end
+$scope module u0 $end
+$var wire 1 c" Cin $end
+$var wire 1 d" Cout $end
+$var wire 1 e" P $end
+$var wire 1 f" S $end
+$var wire 1 g" a $end
+$var wire 1 h" b $end
+$var wire 1 i" naCin $end
+$var wire 1 j" nab $end
+$var wire 1 k" nbCin $end
+$var parameter 32 l" nand_d $end
+$var parameter 32 m" xor_d $end
+$upscope $end
+$upscope $end
+$scope begin adder[14] $end
+$var parameter 5 n" i $end
+$scope module u0 $end
+$var wire 1 o" Cin $end
+$var wire 1 p" Cout $end
+$var wire 1 q" P $end
+$var wire 1 r" S $end
+$var wire 1 s" a $end
+$var wire 1 t" b $end
+$var wire 1 u" naCin $end
+$var wire 1 v" nab $end
+$var wire 1 w" nbCin $end
+$var parameter 32 x" nand_d $end
+$var parameter 32 y" xor_d $end
+$upscope $end
+$upscope $end
+$scope begin adder[15] $end
+$var parameter 5 z" i $end
+$scope module u0 $end
+$var wire 1 {" Cin $end
+$var wire 1 |" Cout $end
+$var wire 1 }" P $end
+$var wire 1 ~" S $end
+$var wire 1 !# a $end
+$var wire 1 "# b $end
+$var wire 1 ## naCin $end
+$var wire 1 $# nab $end
+$var wire 1 %# nbCin $end
+$var parameter 32 &# nand_d $end
+$var parameter 32 '# xor_d $end
+$upscope $end
+$upscope $end
+$scope module instance1 $end
+$var wire 1 ' Cin $end
+$var wire 1 (# Cout $end
+$var wire 1 )# P $end
+$var wire 1 *# S $end
+$var wire 1 +# a $end
+$var wire 1 ,# b $end
+$var wire 1 -# naCin $end
+$var wire 1 .# nab $end
+$var wire 1 /# nbCin $end
+$var parameter 32 0# nand_d $end
+$var parameter 32 1# xor_d $end
+$upscope $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+b1 1#
+b1 0#
+b1 '#
+b1 &#
+b1111 z"
+b1 y"
+b1 x"
+b1110 n"
+b1 m"
+b1 l"
+b1101 b"
+b1 a"
+b1 `"
+b1100 V"
+b1 U"
+b1 T"
+b1011 J"
+b1 I"
+b1 H"
+b1010 >"
+b1 ="
+b1 <"
+b1001 2"
+b1 1"
+b1 0"
+b1000 &"
+b1 %"
+b1 $"
+b111 x
+b1 w
+b1 v
+b110 l
+b1 k
+b1 j
+b101 `
+b1 _
+b1 ^
+b100 T
+b1 S
+b1 R
+b11 H
+b1 G
+b1 F
+b10 <
+b1 ;
+b1 :
+b1 0
+b10000 /
+b10000 $
+$end
+#0
+$dumpvars
+x/#
+x.#
+x-#
+0,#
+0+#
+x*#
+x)#
+x(#
+x%#
+x$#
+x##
+0"#
+1!#
+x~"
+x}"
+x|"
+x{"
+xw"
+xv"
+xu"
+1t"
+0s"
+xr"
+xq"
+xp"
+xo"
+xk"
+xj"
+xi"
+1h"
+0g"
+xf"
+xe"
+xd"
+xc"
+x_"
+x^"
+x]"
+0\"
+1["
+xZ"
+xY"
+xX"
+xW"
+xS"
+xR"
+xQ"
+0P"
+1O"
+xN"
+xM"
+xL"
+xK"
+xG"
+xF"
+xE"
+0D"
+1C"
+xB"
+xA"
+x@"
+x?"
+x;"
+x:"
+x9"
+18"
+07"
+x6"
+x5"
+x4"
+x3"
+x/"
+x."
+x-"
+1,"
+0+"
+x*"
+x)"
+x("
+x'"
+x#"
+x""
+x!"
+0~
+1}
+x|
+x{
+xz
+xy
+xu
+xt
+xs
+1r
+0q
+xp
+xo
+xn
+xm
+xi
+xh
+xg
+1f
+0e
+xd
+xc
+xb
+xa
+x]
+x\
+x[
+0Z
+1Y
+xX
+xW
+xV
+xU
+xQ
+xP
+xO
+1N
+0M
+xL
+xK
+xJ
+xI
+xE
+xD
+xC
+0B
+1A
+x@
+x?
+x>
+x=
+x9
+x8
+x7
+16
+05
+x4
+x3
+x2
+x1
+bx .
+bx -
+bx ,
+b110001101101010 +
+b1001110010010100 *
+b0 )
+b1111111111111111 (
+1'
+b110001101101010 &
+b1001110010010100 %
+x#
+bx "
+bx !
+$end
+#1
+b1111111111111110 "
+b1111111111111110 -
+1E
+1]
+1#"
+1G"
+1S"
+1_"
+1%#
+1/#
+13
+18
+17
+1?
+1D
+1K
+1P
+1O
+1W
+1\
+1c
+1h
+1g
+1o
+1t
+1s
+1{
+1""
+1)"
+1."
+1-"
+15"
+1:"
+19"
+1A"
+1F"
+1M"
+1R"
+1Y"
+1^"
+1e"
+1j"
+1i"
+1q"
+1v"
+1u"
+1}"
+1$#
+0)#
+1.#
+1-#
+b1 )
+#2
+01
+bx1 !
+bx1 ,
+bx0 .
+1*#
+0(#
+b10 )
+#3
+bx11 !
+bx11 ,
+14
+19
+b11 )
+#4
+0=
+bx00 .
+02
+b100 )
+#5
+bx111 !
+bx111 ,
+1@
+1C
+b101 )
+#6
+0I
+bx000 .
+0>
+b110 )
+#7
+bx1111 !
+bx1111 ,
+1L
+1Q
+b111 )
+#8
+0U
+bx0000 .
+0J
+b1000 )
+#9
+bx11111 !
+bx11111 ,
+1X
+1[
+b1001 )
+#10
+0a
+bx00000 .
+0V
+b1010 )
+#11
+bx111111 !
+bx111111 ,
+1d
+1i
+b1011 )
+#12
+0m
+bx000000 .
+0b
+b1100 )
+#13
+bx1111111 !
+bx1111111 ,
+1p
+1u
+b1101 )
+#14
+0y
+bx0000000 .
+0n
+b1110 )
+#15
+bx11111111 !
+bx11111111 ,
+1|
+1!"
+b1111 )
+#16
+0'"
+bx00000000 .
+0z
+b10000 )
+#17
+bx111111111 !
+bx111111111 ,
+1*"
+1/"
+b10001 )
+#18
+03"
+bx000000000 .
+0("
+b10010 )
+#19
+bx1111111111 !
+bx1111111111 ,
+16"
+1;"
+b10011 )
+#20
+0?"
+bx0000000000 .
+04"
+b10100 )
+#21
+bx11111111111 !
+bx11111111111 ,
+1B"
+1E"
+b10101 )
+#22
+0K"
+bx00000000000 .
+0@"
+b10110 )
+#23
+bx111111111111 !
+bx111111111111 ,
+1N"
+1Q"
+b10111 )
+#24
+0W"
+bx000000000000 .
+0L"
+b11000 )
+#25
+bx1111111111111 !
+bx1111111111111 ,
+1Z"
+1]"
+b11001 )
+#26
+0c"
+bx0000000000000 .
+0X"
+b11010 )
+#27
+bx11111111111111 !
+bx11111111111111 ,
+1f"
+1k"
+b11011 )
+#28
+0o"
+bx00000000000000 .
+0d"
+b11100 )
+#29
+bx111111111111111 !
+bx111111111111111 ,
+1r"
+1w"
+b11101 )
+#30
+0{"
+bx000000000000000 .
+0p"
+b11110 )
+#31
+b1111111111111111 !
+b1111111111111111 ,
+1~"
+1##
+b11111 )
+#32
+0#
+b0 .
+0|"
+b100000 )
+#33

@@ -1,10 +1,11 @@
-module up_counter(clk, state, R);
+module up_counter(clk, R);
     input clk;
-    reg [3:0] state;
+    reg [3:0] state = 8'd0;
     output R;
 
-    always @(posedge clk):
+    always @(posedge clk) begin
         state <= state + 8'd1;
-        R = state[3] & state[2] & state[1] & state[0];
     end
+
+    assign R = state[3] & state[2] & state[1] & state[0];
 endmodule

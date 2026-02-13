@@ -16,7 +16,7 @@ module random_DRCA_tb;
     reg clk = 1, Cin;
     wire Cout;
     wire [N-1:0] P, S;
-    always #(N + 1) clk = ~clk; // setup clock signal of period 2N
+    always #(N + 1) clk = ~clk; // setup clock signal of period 2N + 2
 
     //testing variables
     reg [N:0] expected_sum;

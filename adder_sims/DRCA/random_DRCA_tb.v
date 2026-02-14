@@ -43,7 +43,7 @@ module random_DRCA_tb;
         repeat (10000) begin
             A = $random(seed); B = $random(seed); Cin = $random(seed); //truncation of $random is intended
             expected_sum  = A + B + Cin;
-            #(2*N + 2)
+            #(2*N + 2);
             if ({Cout, S} !== expected_sum) begin
                 $display("ERROR: A=%h B=%h Cin=%b | Got=%h Expected=%h",
                          A, B, Cin, {Cout, S}, expected_sum);

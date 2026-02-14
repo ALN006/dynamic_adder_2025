@@ -1,5 +1,5 @@
 `timescale 1ns/1ns
-`include "up_counter.v"
+`include "up_counter_synth.v"
 
 module up_counter_tb;
     reg clk = 1;

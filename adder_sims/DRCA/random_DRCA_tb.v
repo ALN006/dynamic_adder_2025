@@ -4,6 +4,7 @@
 `include "DRCA.v"
 `include "RCA.v"
 `include "FA.v"
+`include "register.v"
 `include "buffer.v"
 
 module random_DRCA_tb;
@@ -20,18 +21,20 @@ module random_DRCA_tb;
 
     //testing variables
     reg [N:0] expected_sum;
+    wire [N:0] out;
     integer run_time = 0;
     integer seed = 42; // for reproducibility of random input cases
 
     //instantiating the design under test
     DRCA #(.N(N)) dut (.clk(clk), .enable(1'b1), .A(A), .B(B), .Cin(Cin), .Cout(Cout), .P(P), .S(S));
+    register #(.N(N+1)) output_register (.clk(clk), .in({Cout, S}), .out(out));
 
     //measuring runtime
     always begin
         #1;
-        if ({Cout, S} !== expected_sum) begin
-            run_time += 1;
-        end
+        if (out !== expected_sum) begin
+            run_time += 1;    // note: it is entirely possible for 2 sums back to back to have the same value
+        end                   // the run time measured would be decresed a clock cycle for every instance of such a case
     end
 
     //test case generation and output verification

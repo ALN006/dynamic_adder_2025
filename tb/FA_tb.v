@@ -1,6 +1,6 @@
 `timescale 1ns/1ns
 //neccesary imports
-`include "FA.v" 
+`include "./source/FA.v" 
 
 module FA_tb;
 
@@ -15,7 +15,7 @@ module FA_tb;
 
 	initial begin
 
-		$dumpfile("FA_tb.vcd"); //where to dump waveform
+		$dumpfile("./waveforms/FA_tb.vcd"); //where to dump waveform
 		$dumpvars(0, FA_tb);    
 
 		repeat (8) begin 

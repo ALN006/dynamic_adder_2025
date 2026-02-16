@@ -1,7 +1,7 @@
 `timescale 1ns/1ns
 
 //imports
-`include "buffer.v"
+`include "./source/buffer.v"
 
 module buffer_tb;
 

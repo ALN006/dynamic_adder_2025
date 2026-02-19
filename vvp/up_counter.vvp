@@ -1,0 +1,154 @@
+#! /c/Source/iverilog-install/bin/vvp
+:ivl_version "12.0 (devel)" "(s20150603-1539-g2693dd32b)";
+:ivl_delay_selection "TYPICAL";
+:vpi_time_precision + 0;
+:vpi_module "C:\iverilog\lib\ivl\system.vpi";
+:vpi_module "C:\iverilog\lib\ivl\vhdl_sys.vpi";
+:vpi_module "C:\iverilog\lib\ivl\vhdl_textio.vpi";
+:vpi_module "C:\iverilog\lib\ivl\v2005_math.vpi";
+:vpi_module "C:\iverilog\lib\ivl\va_math.vpi";
+:vpi_module "C:\iverilog\lib\ivl\v2009.vpi";
+S_000002c86083bc20 .scope package, "$unit" "$unit" 2 1;
+ .timescale 0 0;
+S_000002c86083bdb0 .scope module, "up_counter" "up_counter" 3 1;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "clk";
+    .port_info 1 /INPUT 4 "val";
+    .port_info 2 /INPUT 1 "load";
+    .port_info 3 /OUTPUT 1 "R";
+L_000002c860853130 .functor AND 1, L_000002c8608d0ee0, L_000002c8608d0e40, C4<1>, C4<1>;
+L_000002c860839490 .functor AND 1, L_000002c860853130, L_000002c8608d1160, C4<1>, C4<1>;
+L_000002c8608d1cc0 .functor AND 1, L_000002c860839490, L_000002c8608d1c00, C4<1>, C4<1>;
+v000002c860852da0_0 .net "R", 0 0, L_000002c8608d1cc0;  1 drivers
+v000002c860852b20_0 .net *"_ivl_1", 0 0, L_000002c8608d0ee0;  1 drivers
+v000002c8608d0850_0 .net *"_ivl_11", 0 0, L_000002c8608d1c00;  1 drivers
+v000002c8608d08f0_0 .net *"_ivl_3", 0 0, L_000002c8608d0e40;  1 drivers
+v000002c8608d0990_0 .net *"_ivl_4", 0 0, L_000002c860853130;  1 drivers
+v000002c8608d0a30_0 .net *"_ivl_7", 0 0, L_000002c8608d1160;  1 drivers
+v000002c8608d0ad0_0 .net *"_ivl_8", 0 0, L_000002c860839490;  1 drivers
+o000002c86088a128 .functor BUFZ 1, C4<z>; HiZ drive
+v000002c8608d0b70_0 .net "clk", 0 0, o000002c86088a128;  0 drivers
+o000002c86088a158 .functor BUFZ 1, C4<z>; HiZ drive
+v000002c8608d0c10_0 .net "load", 0 0, o000002c86088a158;  0 drivers
+v000002c8608d1980_0 .var "state", 3 0;
+o000002c86088a1b8 .functor BUFZ 4, C4<zzzz>; HiZ drive
+v000002c8608d0da0_0 .net "val", 3 0, o000002c86088a1b8;  0 drivers
+E_000002c860874f90 .event posedge, v000002c8608d0b70_0;
+L_000002c8608d0ee0 .part v000002c8608d1980_0, 3, 1;
+L_000002c8608d0e40 .part v000002c8608d1980_0, 2, 1;
+L_000002c8608d1160 .part v000002c8608d1980_0, 1, 1;
+L_000002c8608d1c00 .part v000002c8608d1980_0, 0, 1;
+    .scope S_000002c86083bdb0;
+T_0 ;
+    %pushi/vec4 0, 0, 4;
+    %store/vec4 v000002c8608d1980_0, 0, 4;
+    %end;
+    .thread T_0, $init;
+    .scope S_000002c86083bdb0;
+T_1 ;
+    %wait E_000002c860874f90;
+    %load/vec4 v000002c8608d0c10_0;
+    %flag_set/vec4 8;
+    %jmp/0xz  T_1.0, 8;
+    %load/vec4 v000002c8608d0c10_0;
+    %pad/u 4;
+    %assign/vec4 v000002c8608d1980_0, 0;
+    %jmp T_1.1;
+T_1.0 ;
+    %load/vec4 v000002c8608d1980_0;
+    %parti/s 1, 0, 2;
+    %inv;
+    %ix/load 4, 0, 0;
+    %ix/load 5, 0, 0;
+    %flag_set/imm 4, 0;
+    %assign/vec4/off/d v000002c8608d1980_0, 4, 5;
+    %load/vec4 v000002c8608d1980_0;
+    %parti/s 1, 1, 2;
+    %load/vec4 v000002c8608d1980_0;
+    %parti/s 1, 0, 2;
+    %inv;
+    %and;
+    %load/vec4 v000002c8608d1980_0;
+    %parti/s 1, 0, 2;
+    %load/vec4 v000002c8608d1980_0;
+    %parti/s 1, 1, 2;
+    %inv;
+    %and;
+    %or;
+    %ix/load 4, 1, 0;
+    %ix/load 5, 0, 0;
+    %flag_set/imm 4, 0;
+    %assign/vec4/off/d v000002c8608d1980_0, 4, 5;
+    %load/vec4 v000002c8608d1980_0;
+    %parti/s 1, 2, 3;
+    %load/vec4 v000002c8608d1980_0;
+    %parti/s 1, 0, 2;
+    %inv;
+    %and;
+    %load/vec4 v000002c8608d1980_0;
+    %parti/s 1, 2, 3;
+    %load/vec4 v000002c8608d1980_0;
+    %parti/s 1, 1, 2;
+    %inv;
+    %and;
+    %or;
+    %load/vec4 v000002c8608d1980_0;
+    %parti/s 1, 2, 3;
+    %inv;
+    %load/vec4 v000002c8608d1980_0;
+    %parti/s 1, 1, 2;
+    %and;
+    %load/vec4 v000002c8608d1980_0;
+    %parti/s 1, 0, 2;
+    %and;
+    %or;
+    %ix/load 4, 2, 0;
+    %ix/load 5, 0, 0;
+    %flag_set/imm 4, 0;
+    %assign/vec4/off/d v000002c8608d1980_0, 4, 5;
+    %load/vec4 v000002c8608d1980_0;
+    %parti/s 1, 3, 3;
+    %load/vec4 v000002c8608d1980_0;
+    %parti/s 1, 1, 2;
+    %inv;
+    %and;
+    %load/vec4 v000002c8608d1980_0;
+    %parti/s 1, 3, 3;
+    %load/vec4 v000002c8608d1980_0;
+    %parti/s 1, 0, 2;
+    %inv;
+    %and;
+    %or;
+    %load/vec4 v000002c8608d1980_0;
+    %parti/s 1, 3, 3;
+    %load/vec4 v000002c8608d1980_0;
+    %parti/s 1, 2, 3;
+    %inv;
+    %and;
+    %or;
+    %load/vec4 v000002c8608d1980_0;
+    %parti/s 1, 3, 3;
+    %inv;
+    %load/vec4 v000002c8608d1980_0;
+    %parti/s 1, 2, 3;
+    %and;
+    %load/vec4 v000002c8608d1980_0;
+    %parti/s 1, 1, 2;
+    %and;
+    %load/vec4 v000002c8608d1980_0;
+    %parti/s 1, 0, 2;
+    %and;
+    %or;
+    %ix/load 4, 3, 0;
+    %ix/load 5, 0, 0;
+    %flag_set/imm 4, 0;
+    %assign/vec4/off/d v000002c8608d1980_0, 4, 5;
+T_1.1 ;
+    %jmp T_1;
+    .thread T_1;
+# The file index is used to find the file name in the following table.
+:file_names 4;
+    "N/A";
+    "<interactive>";
+    "-";
+    "source/up_counter.v";

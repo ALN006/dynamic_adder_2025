@@ -3,9 +3,12 @@ module up_counter(input clk, input [3:0] val, input load, output R);
 
     always @(posedge clk) begin
         if (load) begin 
-            state <= load;
+            state <= val;
         end else begin 
-            state <= state + 4'd1;
+            state[0] <= ~state[0];
+            state[1] <= state[1] & ~state[0] | state[0] & ~state[1];
+            state[2] <= state[2] & ~state[0] | state[2] & ~state[1] | ~state[2] & state[1] & state[0]; 
+            state[3] <= state[3] & ~state[1] | state[3] & ~state[0] | state[3] & ~state[2] | ~state[3] & state[2] & state[1] & state[0];
         end 
     end
 

@@ -14,7 +14,7 @@ module up_counter_tb;
         $dumpvars(0, up_counter_tb);
 
         #(32);
-        val = 4'd7;
+        val = 4'd6;
         load = 1;
         #(2)
         load = 0;

@@ -8,14 +8,14 @@ module verification_KSA_tb;
     //setting tb variables
     integer seed = 42;
     integer tests = 100000;
-    integer latency [1:64];
+    integer latency [1:32];
     integer csv_file; // file pointer?
 
     // instantiating and testing adders of many widths
     genvar w; 
     generate
 
-        for (w = 1; w <= 64; w = w << 1) begin : WIDTH_TEST
+        for (w = 1; w <= 32; w = w + 1) begin : WIDTH_TEST
             
             // I/O and testing var declarations
             reg  [w-1:0] A, B;
@@ -43,7 +43,7 @@ module verification_KSA_tb;
                     end
                 end
 
-                if (w == 64) begin
+                if (w == 32) begin
                     $finish; // got to final block
                 end    
 
@@ -66,7 +66,7 @@ module verification_KSA_tb;
         // CSV header
         $fwrite(csv_file, "bit_width,total_latency_ns,tests\n");
 
-        for (int i = 1; i <= 64; i = i << 1) begin
+        for (int i = 1; i <= 32; i = i + 1) begin
             $fwrite(csv_file, "%0d,%0d,%0d\n", i, latency[i],tests);
         end
         

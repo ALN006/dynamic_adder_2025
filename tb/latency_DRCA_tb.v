@@ -42,6 +42,7 @@ module latency_DRCA_tb;
                 repeat (tests) begin
                     A = $random(seed); B = $random(seed); Cin = $random(seed); //A, B, Cin
                     expected_sum = A + B + Cin;
+                    #1;
 
                     //measure runtime and wait for execution
                     while (out !== expected_sum) begin

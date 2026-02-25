@@ -16,8 +16,6 @@ module brent_kung_adder #(parameter N = 8) (A, B, C_in, S, C_out);
     assign #2 G[0][0] = (A[0] & B[0]) | (P[0][0] & C_in);
     assign #1 G[0][N-1:1] = A[N-1:1] & B[N-1:1];
 
-    // forward pass (stage 1 to log2(N))
-
     genvar i, stage;
 
     generate
@@ -38,6 +36,7 @@ module brent_kung_adder #(parameter N = 8) (A, B, C_in, S, C_out);
             end
         end
 
+        // one forward and one backward pass (stage = log2(N))
         for (i = 0; i < N; i = i + 1) begin
             localparam prev_step = i + 1 - N/2;
             localparam stage = $clog2(N);

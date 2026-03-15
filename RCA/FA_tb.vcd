@@ -1,5 +1,5 @@
 $date
-	Sun Mar  8 21:28:14 2026
+	Fri Mar 13 02:22:05 2026
 $end
 $version
 	Icarus Verilog
@@ -15,6 +15,7 @@ $var wire 1 $ Cout $end
 $var reg 1 % Cin $end
 $var reg 1 & a $end
 $var reg 1 ' b $end
+$var reg 1024 ( vcd_file [1023:0] $end
 $scope module FA_2_1 $end
 $var wire 1 % Cin $end
 $var wire 1 $ Cout $end
@@ -22,24 +23,25 @@ $var wire 1 # P $end
 $var wire 1 " S $end
 $var wire 1 & a $end
 $var wire 1 ' b $end
-$var wire 1 ( naCin $end
-$var wire 1 ) nab $end
-$var wire 1 * nbCin $end
-$var parameter 32 + NAND_D $end
-$var parameter 32 , XOR_D $end
+$var wire 1 ) naCin $end
+$var wire 1 * nab $end
+$var wire 1 + nbCin $end
+$var parameter 32 , NAND_D $end
+$var parameter 32 - XOR_D $end
 $upscope $end
 $upscope $end
 $enddefinitions $end
 $comment Show the parameter values. $end
 $dumpall
+b1 -
 b1 ,
-b1 +
 $end
 #0
 $dumpvars
+x+
 x*
 x)
-x(
+b10001100100000101011111011101000110001000101110011101100110001101100100 (
 0'
 0&
 0%
@@ -50,9 +52,9 @@ b0 !
 $end
 #1
 0#
-1)
-1(
 1*
+1)
+1+
 #2
 0"
 0$
@@ -74,7 +76,7 @@ b1 !
 b10 !
 1%
 #10
-0*
+0+
 0"
 #11
 1$
@@ -84,7 +86,7 @@ b1 !
 0'
 0%
 #13
-1*
+1+
 1"
 #14
 0$
@@ -92,7 +94,7 @@ b1 !
 b10 !
 1%
 #16
-0(
+0)
 0"
 #17
 1$
@@ -101,9 +103,9 @@ b10 !
 1'
 0%
 #19
-0)
+0*
 0#
-1(
+1)
 1"
 #20
 0"
@@ -111,8 +113,8 @@ b10 !
 b11 !
 1%
 #22
-0(
-0*
+0)
+0+
 1"
 #24
 b0 !

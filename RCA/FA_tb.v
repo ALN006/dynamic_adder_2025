@@ -13,22 +13,30 @@ module FA_tb;
 
 	//design under test
 	FA #(1,1) FA_2_1 (.a(a), .b(b), .Cin(Cin), .Cout(Cout), .P(P), .S(S));
+	reg [1023:0] vcd_file;
 
 	initial begin
 
-		$dumpfile("FA_tb.vcd"); //where to dump waveform
-		$dumpvars(0, FA_tb);    
+		if ($test$plusargs("DUMP_ON")) begin
+
+            $display("Waveform dumping enabled.");
+			$value$plusargs("VCD_NAME=%s", vcd_file);
+            $dumpfile(vcd_file); 
+            $dumpvars(0, FA_tb);    
+        end else begin
+            $display("Note: Waveform dumping disabled.");
+        end   
 
 		repeat (8) begin 
 			#3; 
-			if ({Cout, S} != expected) begin //output testing
-				$display("Error: a=%b b=%b Cin=%b | Expected=%b Got=%\n", a, b, Cin, expected, {Cout,S});
+			if ({Cout, S} !== expected) begin //output testing
+				$display("Error: a=%b b=%b Cin=%b | Expected=%b Got=%b\n", a, b, Cin, expected, {Cout,S});
 			end
 			{a, b, Cin} += 1; //input case generation
 		end
 
 		$display("Simulation Complete"); //just to check that the program counter gets to this
-		$finish; //return control back to the OS ??? 
+		$finish; //return control back to the OS 
 
 	end   
 

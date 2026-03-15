@@ -3,7 +3,7 @@
 // imports to add in top module
 // `include "FA.v"
 
-module RCA #(parameter N = 8) (S, P, Cout, A, B, Cin);
+module RCA #(parameter N = 8, NAND_D = 1, XOR_D = 1) (S, P, Cout, A, B, Cin);
     input [N-1:0] A, B;
     input Cin;
     output Cout;
@@ -13,11 +13,11 @@ module RCA #(parameter N = 8) (S, P, Cout, A, B, Cin);
     wire [N-1:0] C;
 
     //instantiating bitslices
-    FA instance1 (.a(A[0]),.b(B[0]),.Cin(Cin),.Cout(C[0]),.P(P[0]),.S(S[0]));
+    FA #(.NAND_D(NAND_D), .XOR_D(XOR_D)) instance1 (.a(A[0]),.b(B[0]),.Cin(Cin),.Cout(C[0]),.P(P[0]),.S(S[0]));
     genvar i;
     generate
         for ( i = 1; i < N; i++) begin : adder
-            FA u0 (.a(A[i]),.b(B[i]),.Cin(C[i-1]),.Cout(C[i]),.P(P[i]),.S(S[i]));
+            FA #(.NAND_D(NAND_D), .XOR_D(XOR_D)) u0 (.a(A[i]),.b(B[i]),.Cin(C[i-1]),.Cout(C[i]),.P(P[i]),.S(S[i]));
         end
     endgenerate
 

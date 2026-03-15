@@ -1,5 +1,5 @@
 // this is a test_bench for adders
-//TODO: at line 22 write code to specify adder under test using command line arguments
+//TODO: allow for testing of multiple bitwidths in the same run
 
 `timescale 1ns/1ns 
 
@@ -8,10 +8,8 @@
 
 module adder_tb;
 
-    // setting default values for parameters
-    parameter N = 16;
-    parameter NAND_D = 1;
-    parameter XOR_D = 1;
+    // declaring parameters, values are set with makefile
+    parameter N, NAND_D, XOR_D;
 
     // I/O declaration 
     reg [N-1:0] A, B;
@@ -19,7 +17,10 @@ module adder_tb;
     wire Cout;
     wire [N-1:0] P, S;
 
-    //adder under test
-    
+    //adder selection
+    `ifdef RCA
+        RCA #(.N(N), .NAND_D(NAND_D), .XOR_D(XOR_D)) adder (.A(A), .B(B), .Cin(Cin), .Cout(Cout), .P(P), .S(S));
+        initial $display("RCA instantiated as design under test");
+    `endif
 
 endmodule

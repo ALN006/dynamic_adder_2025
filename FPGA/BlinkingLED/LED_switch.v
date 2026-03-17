@@ -1,4 +1,4 @@
-module BlinkingLED (
+module LED_switch (
 	input [17:0] SW,
 	output [17:0] LEDR
 

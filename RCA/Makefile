@@ -1,7 +1,16 @@
 SRC = adder_tb
-N ?= 16
+start ?= 1
+stop ?= 2
+step ?= 1
+dump ?= 0
+tests ?=  10
+seed ?= 42
 NAND_D ?= 1
 XOR_D ?= 1
 
 all:
-	iverilog -g2012 -D$(ADDER) -P$(SRC).N=$(N) -P$(SRC).NAND_D=$(NAND_D) -P$(SRC).XOR_D=$(XOR_D) -o $(ADDER).vvp $(SRC).v 
+	iverilog -s $(SRC) -g2012 -D$(ADDER) -P$(SRC).start=$(start) -P$(SRC).stop=$(stop) -P$(SRC).step=$(step) -P$(SRC).dump=$(dump) -P$(SRC).tests=$(tests) -P$(SRC).seed=$(seed) -P$(SRC).NAND_D=$(NAND_D) -P$(SRC).XOR_D=$(XOR_D) -o $(ADDER).vvp $(SRC).v 
+run:
+	vvp $(ADDER).vvp
+clean:
+	rm -f *.vvp *.vcd results.csv

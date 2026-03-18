@@ -1,10 +1,7 @@
-// this is a test_bench for adders
+// this is a test_bench for adders meant to be run with iverilog
 //TODO: core functionality appears complete, test it
 
 `timescale 1ns/1ns 
-
-`include "RCA.v"
-`include "FA.v"
 
 module adder_tb #(parameter dump, tests, start, stop, step, seed, NAND_D, XOR_D);
 
@@ -54,7 +51,7 @@ module single_test #(parameter dump, tests, N, seed, NAND_D, XOR_D) (input integ
     //testing
     reg  [N:0] expected_sum;
     integer latency;
-    integer s;
+    integer s = seed;
 
     initial begin
 
@@ -69,7 +66,6 @@ module single_test #(parameter dump, tests, N, seed, NAND_D, XOR_D) (input integ
 
         //stimulus   
         repeat (tests) begin
-            s = seed;
             latency = 0;
             A = $random(s); B = $random(s); Cin = $random(s);
             expected_sum = A + B + Cin;   
@@ -85,7 +81,7 @@ module single_test #(parameter dump, tests, N, seed, NAND_D, XOR_D) (input integ
                 $display("ERROR: N, A, B, Cin, {Cout, S}, expected_sum, latency = %0d,%0d,%0d,%0d,%0d,%0d,%0d\n", N, A, B, Cin, {Cout, S}, expected_sum, latency);
             end 
             // Write to CSV
-            $fwrite(file, "%0d,%0d,%0d,%0d,%0d,%0d,%0d\n", N, A, B, Cin, {Cout, S}, expected_sum, latency);
+            $fwrite(file, "%0d,%0b,%0b,%0b,%0b,%0b,%0d\n", N, A, B, Cin, {Cout, S}, expected_sum, latency);
         end
     end
 

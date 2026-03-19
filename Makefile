@@ -19,7 +19,8 @@ all:
 	-P$(SRC).seed=$(seed) \
 	-P$(SRC).NAND_D=$(NAND_D) \
 	-P$(SRC).XOR_D=$(XOR_D) \
-	-o $(ADDER).vvp $(SRC).v RCA.v FA.v
+	-o $(ADDER).vvp $(SRC).v RCA/RCA.v RCA/FA.v
 	vvp $(ADDER).vvp
+	rm $(ADDER).vvp
 clean:
 	rm -f *.vvp *.vcd results.csv

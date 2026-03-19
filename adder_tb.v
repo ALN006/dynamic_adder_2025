@@ -14,7 +14,7 @@ module adder_tb #(parameter dump, tests, start, stop, step, seed, NAND_D, XOR_D)
             $finish;
         end
 
-        $fwrite(file, "N,A,B,Cin,Output,Expected,Latency\n");
+        $fwrite(file, "N,A,B,Cin,P,Output,Expected,Latency\n");
         #(tests*100*((stop-start)/step));
         $fclose(file);
         $finish;
@@ -67,6 +67,8 @@ module single_test #(parameter dump, tests, N, seed, NAND_D, XOR_D) (input integ
         //stimulus   
         repeat (tests) begin
             latency = 0;
+            A = 32'bX; B = 32'bX; Cin = 1'bX;
+            #100;
             A = $random(s); B = $random(s); Cin = $random(s);
             expected_sum = A + B + Cin;   
             #1;
@@ -81,7 +83,7 @@ module single_test #(parameter dump, tests, N, seed, NAND_D, XOR_D) (input integ
                 $display("ERROR: N, A, B, Cin, {Cout, S}, expected_sum, latency = %0d,%0d,%0d,%0d,%0d,%0d,%0d\n", N, A, B, Cin, {Cout, S}, expected_sum, latency);
             end 
             // Write to CSV
-            $fwrite(file, "%0d,%0b,%0b,%0b,%0b,%0b,%0d\n", N, A, B, Cin, {Cout, S}, expected_sum, latency);
+            $fwrite(file, "%0d,%0b,%0b,%0b,%0b,%0b,%0b,%0d\n", N, A, B, Cin, P, {Cout, S}, expected_sum, latency);
         end
     end
 

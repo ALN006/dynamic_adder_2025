@@ -1,6 +1,3 @@
-bit_width, total_latency_ns, tests
-4,449162,100000
-8,694230,100000
-16,926188,100000
-32,1142603,100000
-64,1164538,100000
+version https://git-lfs.github.com/spec/v1
+oid sha256:10b92a29e1cb23bddcdff02fd02ca7bc3f6bc620014da468b7c6de1c5184e51f
+size 120

@@ -7,6 +7,7 @@ module adder_tb #(parameter dump, tests, start, stop, step, seed, NAND_D, XOR_D)
 
     //csv
     integer file;
+    wire [(stop - start - step)/step : 0] done;
     initial begin
         file = $fopen("results.csv", "w");
         if (file == 0) begin
@@ -15,7 +16,7 @@ module adder_tb #(parameter dump, tests, start, stop, step, seed, NAND_D, XOR_D)
         end
 
         $fwrite(file, "N,A,B,Cin,P,Output,Expected,Latency\n");
-        #(tests*100*((stop-start)/step));
+        wait(&done);
         $fclose(file);
         $finish;
     end
@@ -23,16 +24,15 @@ module adder_tb #(parameter dump, tests, start, stop, step, seed, NAND_D, XOR_D)
     //instantiating adders under test
     genvar i;
     generate
-        for ( i = start; i < stop; i = i + step) begin : adder
-            single_test #(.dump(dump), .tests(tests), .N(i), .seed(seed), .NAND_D(NAND_D), .XOR_D(XOR_D)) test_inst (.file(file));
+        for (i = start; i < stop; i = i + step) begin : adder
+            single_test #(.dump(dump), .tests(tests), .N(i), .seed(seed), .NAND_D(NAND_D), .XOR_D(XOR_D)) test_inst (.file(file), .done(done[(i-start)/step]));
         end
     endgenerate
-
 endmodule
 
 
 
-module single_test #(parameter dump, tests, N, seed, NAND_D, XOR_D) (input integer file);
+module single_test #(parameter dump, tests, N, seed, NAND_D, XOR_D) (input integer file, output reg done);
 
     // I/O declaration 
     reg [N-1:0] A, B;
@@ -54,20 +54,20 @@ module single_test #(parameter dump, tests, N, seed, NAND_D, XOR_D) (input integ
     integer s = seed;
 
     initial begin
+        
+        done = 0;
 
         //waveform  
         if (dump == 1)  begin
             $display("Waveform dumping enabled.");
             $dumpfile("adder.vcd"); 
-            $dumpvars(0, single_test);    
-        end else begin
-            $display("Note: Waveform dumping disabled.");
-        end
+            $dumpvars(0);    
+        end 
 
         //stimulus   
         repeat (tests) begin
             latency = 0;
-            A = 32'bX; B = 32'bX; Cin = 1'bX;
+            A = {N{1'bX}}; B = {N{1'bX}}; Cin = 1'bX;
             #100;
             A = $random(s); B = $random(s); Cin = $random(s);
             expected_sum = A + B + Cin;   
@@ -85,6 +85,9 @@ module single_test #(parameter dump, tests, N, seed, NAND_D, XOR_D) (input integ
             // Write to CSV
             $fwrite(file, "%0d,%0b,%0b,%0b,%0b,%0b,%0b,%0d\n", N, A, B, Cin, P, {Cout, S}, expected_sum, latency);
         end
+
+        done = 1;
+        
     end
 
 endmodule

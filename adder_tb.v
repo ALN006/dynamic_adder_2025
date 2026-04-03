@@ -18,7 +18,7 @@ module adder_tb #(parameter dump, tests, start, stop, step, seed, NAND_D, XOR_D)
         $fwrite(file, "N,A,B,Cin,P,Output,Expected,Latency\n");
         wait(&done);
         $fclose(file);
-        $finish;
+        $finish; //exit the simulation
     end
 
     //instantiating adders under test

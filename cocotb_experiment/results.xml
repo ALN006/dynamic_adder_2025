@@ -1,0 +1,6 @@
+<testsuites name="results">
+  <testsuite name="all" package="all">
+    <property name="random_seed" value="1775286885" />
+    <testcase name="my_second_test" classname="test_my_design" file="/Users/adityaln/Desktop/dynamic_fadder_2025/cocotb_experiment/test_my_design.py" lineno="16" time="0.0003311634063720703" sim_time_ns="6.0" ratio_time="18117.94384449244" />
+  </testsuite>
+</testsuites>

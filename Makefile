@@ -19,7 +19,7 @@ all:
 	-P$(SRC).seed=$(seed) \
 	-P$(SRC).NAND_D=$(NAND_D) \
 	-P$(SRC).XOR_D=$(XOR_D) \
-	-o $(ADDER).vvp $(SRC).v RCA/RCA.v RCA/FA.v
+	-o $(ADDER).vvp $(SRC).v RCA/RCA.v RCA/FA.v new_adder/adder.v
 	vvp $(ADDER).vvp
 	rm $(ADDER).vvp
 clean:

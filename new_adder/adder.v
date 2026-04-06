@@ -6,46 +6,9 @@ module adder_16( //the dynamic adder design
 
     wire [$bits(sum) - 1:0] P, temp_sum; // temp_sum holds sum till ready signal R is 1
 
-    bitslices_16 add_logic (.A(A), .B(B), .Cin(Cin), .Cout(Cout), .sum(temp_sum), .P(P));
+    RCA #(.N(16), .NAND_D(1), .XOR_D(1)) add_logic (.A(A), .B(B), .Cin(Cin), .Cout(Cout), .S(temp_sum), .P(P));
 
-    timer timing_circuit_16 (.P(P), .sum(temp_sum), .F(F), .request(request), .sum_out(sum));
-
-endmodule
-
-
-module bitslices_16(  //instantiates 16 bit slices which are connected ripple carry style
-    input [15:0] A, B,
-    input Cin,
-    output Cout,
-    output [15:0] P, sum);
-
-    wire [$bits(sum) - 1:0]carry;
-
-    FA instance1 (A[0],B[0],Cin,carry[0],P[0],sum[0]);
-
-    genvar i;
-    generate
-        for ( i = 1; i < $bits(sum); i++) begin : adder
-            FA u0 (A[i],B[i],carry[i-1],carry[i],P[i],sum[i]);
-        end
-    endgenerate
-
-    assign Cout = carry[$bits(sum) - 1];
-
-endmodule
-
-module FA( // dynamic adder bitslice
-    input a,b, Cin,
-    output Cout, P, s);
-    parameter nand_d = 1, xor_d = 1; 
-
-    wire nab, naCin, nbCin, temp;
-    xor #(xor_d) x0 (P, a, b);
-    xor #(xor_d) x1 (s, P, Cin);
-    nand #(nand_d) n0 (nbCin, b, Cin);
-    nand #(nand_d) n1 (nab, a, b);
-    nand #(nand_d) n2 (naCin, a, Cin);
-    nand #(nand_d) n3 (Cout, nab, nbCin, naCin);
+    timing_circuit_16 timer (.P(P), .sum(temp_sum), .F(F), .request(request), .sum_out(sum));
 
 endmodule
 
@@ -92,7 +55,7 @@ module timing_circuit_16(
 endmodule
 
 module timer_3(
-    input F, // the "first" signal
+    input F, // active high "first" signal
     output c0,c1,c2
 );
     parameter and_d = 1, xor_d = 1; 

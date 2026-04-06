@@ -1,4 +1,4 @@
-//TODO: timing logic
+//TODO: timing logic needs to be done
 
 module CRCA #(parameter N = 8, NAND_D = 1, XOR_D = 1) (S, P, Cout, A, B, Cin);
     input [N-1:0] A, B;

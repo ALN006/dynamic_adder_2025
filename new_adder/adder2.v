@@ -41,6 +41,7 @@ module RCA #(parameter N = 8, NAND_D = 1, XOR_D = 1) (  //instantiates 16 bit sl
 
 endmodule
 
+
 module FA #(parameter nand_d = 1, xor_d = 1) ( // dynamic adder bitslice
     input a,b, Cin,
     output Cout, P, s);
@@ -53,6 +54,34 @@ module FA #(parameter nand_d = 1, xor_d = 1) ( // dynamic adder bitslice
     nand #(nand_d) n2 (naCin, a, Cin);
     nand #(nand_d) n3 (Cout, nab, nbCin, naCin);
 
+endmodule
+
+module stopwatch #(parameter N = 8, AND_D = 1, XOR_D = 1) (
+    input F, 
+    output [N - 1: 0] out
+);
+    wire [N-1:0] and1_out;
+    wire [N-1:0] xor_out; 
+    wire [N-2:0] and2_out;
+
+    and #(AND_D) delay_and (and1_out[0], out[0], out[0]);
+    xor #(XOR_D) main_x (xor_out[0], and1_out[0], 1'b1);
+    and #(AND_D) f_and (out[0], xor_out[0], ~F);
+
+    and #(AND_D) prev_and (and2_out[0], out[0], 1'b1);
+    and #(AND_D) delay_and2 (and1_out[1], out[1], out[1]);
+    xor #(XOR_D) main_x2 (xor_out[1], and1_out[1], and2_out[0]);
+    and #(AND_D) f_and2 (out[1], xor_out[1], ~F);
+
+    integer i;
+    generate
+        for(i = 2; i < N; i = i + 1) begin
+            and #(AND_D) prev_and_N (and2_out[i - 1], out[i - 1], and2_out[i - 2]);
+            and #(AND_D) delay_and_N (and1_out[i], out[i], out[i]);
+            xor #(XOR_D) main_x_N (xor_out[i], and1_out[i], and2_out[i - 1]);
+            and #(AND_D) f_and_N (out[i], xor_out[i], ~F);
+        end
+    endgenerate
 endmodule
 
 module mux_3_8( // 3*8 mux that captures any selected signal in 3 gate delays so long as it was high for atleast 2 gate delays

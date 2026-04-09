@@ -1,4 +1,4 @@
-//TODO: timing logic needs to be done
+//TODO: timing logic
 
 module CRCA #(parameter N = 8, NAND_D = 1, XOR_D = 1) (S, P, Cout, A, B, Cin);
     input [N-1:0] A, B;
@@ -44,7 +44,7 @@ module timing_circuit #(parameter N = 8, AND_D = 1, XOR_D = 1, NAND_D = 1) (
     );
     wire rlease;
     and #(and_d) (rlease, ready, request);
-    buffer #(N) buf(.enable(rlease), .in(sum), .out(sum_out));
+    buffer #(N) buf2(.enable(rlease), .in(sum), .out(sum_out));
 endmodule
 
 //module timing_circuit #(parameter N = 8, NAND_D = 1, AND_D = 1, OR_D = 1) 

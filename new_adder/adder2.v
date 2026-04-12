@@ -1,4 +1,4 @@
-//TODO: timing logic
+//TODO: timing logic, include stopwatch and RCA 
 
 module CRCA #(parameter N = 8, NAND_D = 1, XOR_D = 1) (S, P, Cout, A, B, Cin);
     input [N-1:0] A, B;
@@ -45,26 +45,6 @@ module timing_circuit #(parameter N = 8, AND_D = 1, XOR_D = 1, NAND_D = 1) (
     wire rlease;
     and #(and_d) (rlease, ready, request);
     buffer #(N) buf2(.enable(rlease), .in(sum), .out(sum_out));
-endmodule
-
-//module timing_circuit #(parameter N = 8, NAND_D = 1, AND_D = 1, OR_D = 1) 
-module stopwatch #(parameter N = 3, AND_D = 1, XOR_D = 1) (
-    input F, 
-    output [N - 1: 0] out
-);
-    wire [N-1:0] and1_out;
-    wire [N-1:0] xor_out; 
-    wire [N-1:0] and2_out;
-
-    genvar i;
-    generate
-        for (i = 0; i < N; i ++) begin : delay_and
-            and #(AND_D) delay_and_N (and1_out[i], out[i], out[i]);
-            and #(AND_D) f_and_N (out[i], xor_out[i], ~F);
-            assign and2_out[i] = &{out[i:0], 1'b1};
-            xor #(XOR_D) main_x_N (xor_out[i], and1_out[i], and2_out[i]);
-        end 
-    endgenerate
 endmodule
 
 module mux_3_8( // 3*8 mux that captures any selected signal in 3 gate delays so long as it was high for atleast 2 gate delays

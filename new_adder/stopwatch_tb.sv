@@ -20,7 +20,7 @@ module stopwatch_tb #(
     // Inputs: One F bit per instance
     reg [NUM_INSTANCES-1:0] F;
 
-    // Outputs: Since 'out' width varies per instance, we use an unpacked array.
+    // Outputs: Since 'out' width varies per instance, we use an array of wires.
     // We size the second dimension to 'stop' to ensure it's wide enough for the largest N.
     wire [stop-1:0] out_bus [NUM_INSTANCES-1:0];
 

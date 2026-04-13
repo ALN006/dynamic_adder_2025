@@ -1,4 +1,5 @@
 SRC = adder_tb
+test ?= 0
 start ?= 1
 stop ?= 2
 step ?= 1
@@ -11,6 +12,7 @@ XOR_D ?= 1
 all:
 	iverilog -s $(SRC) \
 	-g2012 -D$(ADDER) \
+	-P$(SRC).start=$(test) \
 	-P$(SRC).start=$(start) \
 	-P$(SRC).stop=$(stop) \
 	-P$(SRC).step=$(step) \

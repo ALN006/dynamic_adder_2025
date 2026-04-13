@@ -1,3 +1,7 @@
+# Makefile to run and test a specified adder using addder_tb
+# Syntax to make:
+# make ADDER=adderName
+
 SRC = adder_tb
 start ?= 1
 stop ?= 2
@@ -19,7 +23,7 @@ all:
 	-P$(SRC).seed=$(seed) \
 	-P$(SRC).NAND_D=$(NAND_D) \
 	-P$(SRC).XOR_D=$(XOR_D) \
-	-o $(ADDER).vvp $(SRC).v RCA/RCA.v RCA/FA.v new_adder/adder.v
+	-o $(ADDER).vvp $(SRC).v RCA/RCA.v RCA/FA.v new_adder/adder.v KSA/KSA.v PTA/PTA.v
 	vvp $(ADDER).vvp
 	rm $(ADDER).vvp
 clean:

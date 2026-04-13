@@ -53,6 +53,11 @@ module single_test #(parameter dump, tests, N, seed, NAND_D, XOR_D) (input integ
         initial $display("adder instantiated as design under test");
     `endif
 
+    `ifdef KSA
+        KSA #(.N(N)) adder (.A(A),.B(B), .Cin(Cin), .Cout(Cout), .S(S));
+        initial $display("KSA instantiated as design under test");
+    `endif
+
     //testing
     reg  [N:0] expected_sum;
     integer latency;
@@ -95,6 +100,71 @@ module single_test #(parameter dump, tests, N, seed, NAND_D, XOR_D) (input integ
             $fwrite(file, "%0d,%0b,%0b,%0b,%0b,%0b,%0b,%0d\n", N, A, B, Cin, P, {Cout, S}, expected_sum, latency);
         end
 
+        done = 1;
+        
+    end
+
+endmodule
+
+
+module multi_test #(parameter dump, tests, N, seed, NAND_D, XOR_D) (input integer file, output reg done);
+
+    // I/O declaration 
+    reg [N-1:0] A, B;
+    reg Cin;
+    wire Cout;
+    wire [N-1:0] P, S;
+
+
+    //adder selection
+    `ifdef PTA
+        PTA #(.N(N), .NAND_D(NAND_D), .XOR_D(XOR_D)) adder (.A(A), .B(B), .Cin(Cin), .Cout(Cout), .P(P), .S(S));
+        initial $display("RCA instantiated as design under test");
+    `endif
+
+
+    //testing
+    reg  [N:0] expected_sum;
+    integer latency;
+    integer s = seed;
+
+    initial begin
+        
+        done = 0;
+
+        //waveform  
+        if (dump == 1)  begin
+            $display("Waveform dumping enabled.");
+            $dumpfile("adder.vcd"); 
+            $dumpvars(0);    
+        end 
+
+
+        //stimulus but for multi
+        for (i = 0; i < tests; i++) begin
+          latency = 0;
+          // copied from RCA
+          A = {N{1'bX}}; B = {N{1'bX}}; //Cin = 1'bX;
+          
+          // generate a bunch of random numbers
+          A = $random(s*i); B = $random(s*i); // Cin = $random(s);
+          // expected_sum = A + B  // + Cin
+          while (ready !== 1 && latency < 100) begin
+            latency ++;
+            #1;
+          end
+          
+          if (Cout != A + B) begin
+            $display("ERROR: adder returned incorrect value");
+          end
+
+          // return error if latency is too high
+          if (latency == 100) begin
+              $display("ERROR: latency hit 100");
+          end 
+        
+        end
+  
         done = 1;
         
     end

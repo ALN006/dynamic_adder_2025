@@ -11,5 +11,5 @@ This repository contians many verilog source files, a couple of test benches and
 1. Delay Parameter: (GATE/MODULE) _ D
 2. Module instance: (module name) _ (latency) _ (copy#)
 
-# Refrances Used 
+# Refrences Used 
 Verilog: https://www.chipverify.com/tutorials/verilog

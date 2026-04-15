@@ -1,4 +1,6 @@
-// this is a 1 bit Full Adder
+// TODO: ADD documentation in readme.md
+
+// this is a 1 bit Full Adder with parameterized gate delays
 module FA #(parameter NAND_D = 1, XOR_D = 1) (S, P, Cout, a, b, Cin);
     input a, b, Cin;
     output Cout, P, S;

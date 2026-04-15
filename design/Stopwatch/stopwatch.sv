@@ -4,8 +4,8 @@
 //it uses with combinational feedback loops to facilitate asynchronous timing
 //wire length differances, differances in gate delay between different gates and temprature variations may cause reliability issues
 module stopwatch #(parameter N = 3, AND_D = 1, XOR_D = 1) (F, out);
-    input F, //active high "first" signal
-    output [N - 1: 0] out
+    input F; //active high "first" signal
+    output [N - 1: 0] out;
 
     //time definition 
     timeunit 1ns;

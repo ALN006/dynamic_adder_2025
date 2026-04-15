@@ -3,10 +3,9 @@
 //module whoose output counts up from 0 every 3 gate delays, except for the count from 0 to 1 which takes just one gate delay
 //it uses with combinational feedback loops to facilitate asynchronous timing
 //wire length differances, differances in gate delay between different gates and temprature variations may cause reliability issues
-module stopwatch #(parameter N = 3, AND_D = 1, XOR_D = 1) (
-    input F, 
+module stopwatch #(parameter N = 3, AND_D = 1, XOR_D = 1) (F, out);
+    input F, //active high "first" signal
     output [N - 1: 0] out
-);
 
     //time definition 
     timeunit 1ns;
@@ -17,7 +16,7 @@ module stopwatch #(parameter N = 3, AND_D = 1, XOR_D = 1) (
     wire [N-1:0] xor_out; 
     wire [N-1:0] and2_out;
 
-    //timing loops
+    //up count loops
     genvar i;
     generate
         for (i = 0; i < N; i ++) begin : bit_N

@@ -1,8 +1,5 @@
 // TODO: ADD documentation in readme.md
 
-// imports
-`include "FA.sv"
-
 // NOTE: time definitation and delays are coded into FA.v
 
 //Ripple Carry Adder with Parametrized width and gate delays

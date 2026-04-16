@@ -9,13 +9,13 @@
 // behavioural verilog code for new adder with width and gate delay parameterized
 module CRCA #(
     parameter N = 8, NAND_D = 1, NOR_D = 1, XOR_D = 1
-) (ready, S, P, Cout, A, B, Cin, first, request);
+) (ready_c, S, P, Cout, A, B, Cin, first, request);
 
     // I/O type specification
     input [N-1:0] A, B;
     input Cin, first, request;
     output Cout; 
-    output reg ready; 
+    output reg ready_c; 
     output [N-1:0] P, S;
 
     // wire between RCA and output buffer
@@ -35,27 +35,27 @@ module CRCA #(
     reg [$clog2(4*N)-1:0] run_time;
     stopwatch_behavioural #(.N($clog2(4*N)), .half_period(0.5)) timer (.reset(first), .state(run_time));
 
-    // Set ready = 1 when appropriate time has passed
+    // Set ready_c = 1 when appropriate time has passed
     always @(*) begin
         if (!request) begin
-            ready = 1'b0;
+            ready_c = 1'b0;
         end else begin
             case (quadrant_breaks)
                 // Multiplication before division to avoid integer zeroing (e.g., 3/4 = 0)
-                3'b000: ready = (run_time >= 2*N - 1);
-                3'b001: ready = (run_time >= 2*((N*3)/4 + 2));
-                3'b010: ready = (run_time >= N + 2);
-                3'b011: ready = (run_time >= N + 2);
-                3'b100: ready = (run_time >= 2*((N*3)/4 + 2));
-                3'b101: ready = (run_time >= N + 2);
-                3'b110: ready = (run_time >= N + 2);
-                3'b111: ready = (run_time >= 2*((N/4) + 2)); 
-                default: ready = (run_time >= 2*N - 1);
+                3'b000: ready_c = (run_time >= 2*N - 1);
+                3'b001: ready_c = (run_time >= 2*((N*3)/4 + 2));
+                3'b010: ready_c = (run_time >= N + 2);
+                3'b011: ready_c = (run_time >= N + 2);
+                3'b100: ready_c = (run_time >= 2*((N*3)/4 + 2));
+                3'b101: ready_c = (run_time >= N + 2);
+                3'b110: ready_c = (run_time >= N + 2);
+                3'b111: ready_c = (run_time >= 2*((N/4) + 2)); 
+                default: ready_c = (run_time >= 2*N - 1);
             endcase
         end
     end
 
     //output buffer
-    buffer #(.N(N + 1), .delay(0)) buff_out (.enable(ready), .in(RCA_out), .out({Cout, S}));
+    buffer #(.N(N + 1), .delay(0)) buff_out (.enable(ready_c), .in(RCA_out), .out({Cout, S}));
 
 endmodule

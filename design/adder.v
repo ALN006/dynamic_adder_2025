@@ -1,4 +1,18 @@
-module adder_16( //the dynamic adder design 
+/*
+  Dynamic 16-bit adder with completion detection.
+
+  This module implements a dynamic adder that uses a completion detection
+  peripheral to release the output once the internal carry propagation
+  logic has finished computing the result.
+
+  Components:
+    - adder_16         : top-level dynamic adder wrapper
+    - timing_circuit_16: ready signal generator based on propagate bits
+    - buffer_16        : tri-state output buffer gated by completion
+    - timer_3          : small timing controller for sequential capture
+    - mux_3_8          : captured selection logic for ready detection
+*/
+module adder_16(
     input F, Cin, request,
     input [15:0] A, B,
     output Cout,

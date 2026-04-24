@@ -13,7 +13,7 @@ module FA #(parameter NAND_D = 1, XOR_D = 1) (S, P, Cout, a, b, Cin);
     nand #(NAND_D) nand_2_0 (Cout, nab, naCin, nbCin);
 
     // sum unit
-    xor #(XOR_D) x0 (P, a, b);
-    xor #(XOR_D) x1 (S, P, Cin);
+    xor #(XOR_D) xor_1_0 (P, a, b);
+    xor #(XOR_D) xor_2_1 (S, P, Cin);
 
 endmodule

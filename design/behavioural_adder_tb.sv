@@ -1,3 +1,4 @@
+// global time unit and precision declaration
 `timescale 1ns/1ps
 `include "adder_behavioural.sv"
 

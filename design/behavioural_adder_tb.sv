@@ -1,8 +1,11 @@
 // global time unit and precision declaration
 `timescale 1ns/1ps
-`include "adder_behavioural.sv"
 
-module addition_tb #(parameter dump = 0, tests = 100_000, start = 8, stop = 33, step = 4);
+// dependancies
+// `include "adder_behavioural.sv"
+
+// testbench for behavioural description of adder
+module behavioural_adder_tb #(parameter dump = 0, tests = 100_000, start = 8, stop = 33, step = 4);
     
     // 1. Calculate the exact number of steps
     localparam NUM_INSTANCES = (stop - start) / step + 1;
@@ -49,10 +52,10 @@ module addition_tb #(parameter dump = 0, tests = 100_000, start = 8, stop = 33, 
         if (dump == 1) begin 
             $display("Waveform dumping enabled."); 
             $dumpfile("adder.vcd"); 
-            $dumpvars(0, addition_tb); 
+            $dumpvars(0, behavioural_adder_tb); 
         end
 
-        file = $fopen("results.csv", "w");
+        file = $fopen("behavioural_adder_latency.csv", "w");
         $fwrite(file, "N,A,B,Cin,P_bits,Output,Expected,Latency\n"); 
 
         // 3. Main Test Loop

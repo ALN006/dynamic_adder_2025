@@ -1,4 +1,4 @@
-// TODO:
+// TODO: check stopwatch width for sensibility
 
 //imports 
 `include "source/buffer.sv"

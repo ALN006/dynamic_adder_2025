@@ -19,34 +19,19 @@ module adder_tb #(parameter test, dump, tests, start, stop, step, seed, NAND_D, 
     //csv and vcd
     integer file;
     wire [NUM_INSTANCES-1: 0] done;
-    initial begin  
 
+    initial begin  
         //waveform 
         if (dump == 1) begin $display("Waveform dumping enabled."); $dumpfile("adder.vcd"); $dumpvars(0); end
          
+        //open csv file and write header
         file = $fopen("results.csv", "w");
-        if (file == 0) begin
-            $display("ERROR: Could not open file.");
-            $finish;
-        end
+        if (file == 0) begin $display("ERROR: Could not open file."); $finish; end
         $fwrite(file, "N,A,B,Cin,P,Output,Expected,Latency\n");
         wait(&done);
-        for (int k = 0; k < NUM_INSTANCES; k++) begin
-            for (int j = 0; j < tests; j++) begin
-                $fwrite(file, "%0d,%0d,%0d,%0d,%0d,%0d,%0d,%0d\n", 
-                results[k][j][0], // N
-                results[k][j][1], // A
-                results[k][j][2], // B
-                results[k][j][3], // Cin 
-                results[k][j][4], // P
-                results[k][j][5], // Output
-                results[k][j][6], // Expected
-                results[k][j][7]  // Latency
-                );
-            end
-        end
         $fclose(file);
         $finish; //exit the simulation
+
     end
 
     // instantiating test modules
@@ -55,37 +40,38 @@ module adder_tb #(parameter test, dump, tests, start, stop, step, seed, NAND_D, 
             // Local index calculation for readability
             localparam idx = (i - start) / step;
 
-            if (test == 0) begin : rand_mode
+            if (test == 0) begin
                 // Declare a local array within the generate scope to satisfy the port connection
                 int local_result [tests-1:0][7:0];
 
                 if (test == 0) begin 
                 single_test #(
-                    .tests(tests), .N(i), .seed(seed),
+                    .tests(tests), .N(i),
                     .NAND_D(NAND_D), .XOR_D(XOR_D)
                 ) test_inst (
-                    .result(local_result), 
+                    .file(file),
                     .done(done[idx])
                 ); end
-
-                // becase apparently icarus verilog cant handle slice assignment yet
-                for (genvar j = 0; j < tests; j++) begin : map_tests
-                    for (genvar k = 0; k < 8; k++) begin : map_data
-                        assign results[idx][j][k] = local_result[j][k];
-                    end
-                end
             end
         end
     endgenerate
 endmodule
 
-// test modules
-module single_test #(parameter tests, N, seed, NAND_D, XOR_D) (result, done);
+// one random set of inuputs per test, with a timeout and latency measurement for each test
+module single_test #(
+    parameter tests = 100,
+    parameter timeout = 200, 
+    parameter N = 8,  
+    parameter NAND_D = 1, 
+    parameter XOR_D = 1
+    ) (file, done);
+
+    input integer file;
     output reg done;
-    output int result [tests-1:0][7:0];
-    
-    // I/O declaration 
-    reg F, request;
+    // output int result [tests-1:0][7:0];
+
+    // I/O declaration
+    reg F, request; 
     reg [N-1:0] A, B;
     reg Cin;
     wire Cout;
@@ -96,52 +82,31 @@ module single_test #(parameter tests, N, seed, NAND_D, XOR_D) (result, done);
         RCA #(.N(N), .NAND_D(NAND_D), .XOR_D(XOR_D)) adder (.A(A), .B(B), .Cin(Cin), .Cout(Cout), .P(P), .S(S));
         initial $display("RCA instantiated as design under test");
     `endif
-    `ifdef V1
-        adder_16 adder (.F(F), .request(request), .A(A), .B(B), .Cin(Cin), .Cout(Cout), .sum(S));
-        initial $display("adder instantiated as design under test");
-    `endif
 
     //testing
     reg  [N:0] expected_sum;
     integer latency;
-    integer s = seed;
 
     initial begin
-        
         done = 0;
-
         //stimulus   
         for (int i = 0; i < tests; i++) begin
             latency = 0;
             A = {N{1'bX}}; B = {N{1'bX}}; Cin = 1'bX;
-            request = 0;
-            #100;
-            A = $random(s); B = $random(s); Cin = $random(s);
-            request = 1;
-            expected_sum = A + B + Cin;
-            F = 1;   
+            #(timeout);
+            A = $urandom(); B = $urandom(); Cin = $urandom_range(0, 1);
+            expected_sum = A + B + Cin; 
             #1;
 
-            //measure runtime and wait for execution
-            while (({Cout, S} !== expected_sum) && (latency < 100)) begin
-                latency += 1;
-                if (latency == 8) F = 0;
-                #1;
+            //measure runtime
+            while (({Cout, S} !== expected_sum) && (latency < timeout)) begin latency += 1; #1; end
+            if (latency == timeout) begin
+                $display("ERROR: N = %0d, A = %0d, B = %0d, P = %0d, Cin = %0d, {Cout, S} = %0d, expected_sum = %0d, latency = %0d\n", N, A, B, P, Cin, {Cout, S}, expected_sum, latency);
             end
-            if (latency == 100) begin
-                $display("ERROR: N, A, B, Cin, {Cout, S}, expected_sum, latency = %0d,%0d,%0d,%0d,%0d,%0d,%0d\n", N, A, B, Cin, {Cout, S}, expected_sum, latency);
-            end 
-            
-            // log test results
-            result[i][0] = N;
-            result[i][1] = A;
-            result[i][2] = B;
-            result[i][3] = Cin;
-            result[i][4] = P;
-            result[i][5] = {Cout, S};
-            result[i][6] = expected_sum;
-            result[i][7] = latency;
+
+            $fwrite(file, "%0d,%b,%b,%0d,%b,%b,%b,%0d\n", N, A, B, Cin, P, {Cout, S}, expected_sum, latency);
         end
-        done = 1; 
+        done = 1;
     end
+
 endmodule

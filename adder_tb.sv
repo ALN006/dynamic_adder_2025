@@ -1,22 +1,17 @@
 // TODO: Multi_tb for pipelined adder
 
 // test key:
-//      0 -> single_test : 'tests' tests with random numbers, one number per test 
+//      0 -> single_test : 'tests' tests with random numbers, one number per test one at a time
+//      1 -> async_test  : 'tests' tests with random numbers, First, request are set appropriately
 
 // time definition
-timeunit 1ns;
-timeprecision 1ns;
+`timescale 1ns/1ps
 
 // this is a test bench for all adders meant to be run with iverilog, it has a top module that handles csv logging and instantiating the appropriate test module
 module adder_tb #(parameter test, dump, tests, start, stop, step, seed, NAND_D, XOR_D)();
 
     // local parameters
     localparam NUM_INSTANCES = (stop - start)/step;
-
-    // local variable to aggregate results before passing to a csv file
-    int results [NUM_INSTANCES-1:0][tests-1:0][7:0];
-
-    //csv and vcd
     integer file;
     wire [NUM_INSTANCES-1: 0] done;
 
@@ -31,7 +26,6 @@ module adder_tb #(parameter test, dump, tests, start, stop, step, seed, NAND_D, 
         wait(&done);
         $fclose(file);
         $finish; //exit the simulation
-
     end
 
     // instantiating test modules
@@ -39,36 +33,15 @@ module adder_tb #(parameter test, dump, tests, start, stop, step, seed, NAND_D, 
         for (genvar i = start; i < stop; i = i + step) begin : adder_test
             // Local index calculation for readability
             localparam idx = (i - start) / step;
-
-            if (test == 0) begin
-                // Declare a local array within the generate scope to satisfy the port connection
-                int local_result [tests-1:0][7:0];
-
-                if (test == 0) begin 
-                single_test #(
-                    .tests(tests), .N(i),
-                    .NAND_D(NAND_D), .XOR_D(XOR_D)
-                ) test_inst (
-                    .file(file),
-                    .done(done[idx])
-                ); end
-            end
+            if (test == 0) single_test #(.tests(tests), .N(i), .NAND_D(NAND_D), .XOR_D(XOR_D)) test_inst (.file(file), .done(done[idx]));
         end
     endgenerate
 endmodule
 
 // one random set of inuputs per test, with a timeout and latency measurement for each test
-module single_test #(
-    parameter tests = 100,
-    parameter timeout = 200, 
-    parameter N = 8,  
-    parameter NAND_D = 1, 
-    parameter XOR_D = 1
-    ) (file, done);
-
+module single_test #(parameter tests = 100, timeout = 200, N = 8, NAND_D = 1, XOR_D = 1) (file, done);
     input integer file;
     output reg done;
-    // output int result [tests-1:0][7:0];
 
     // I/O declaration
     reg F, request; 
@@ -108,5 +81,9 @@ module single_test #(
         end
         done = 1;
     end
+
+endmodule
+
+module async_test
 
 endmodule

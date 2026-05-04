@@ -3,6 +3,7 @@
 */
 
 module KSA #(parameter N = 8) (A,B, Cin, Cout,S);
+    
     input [N-1: 0] A, B;
     input Cin;
     output Cout;
@@ -15,16 +16,26 @@ module KSA #(parameter N = 8) (A,B, Cin, Cout,S);
     assign C[0] = Cin;
 
     //logic
-    assign #(1) G[0] = A & B;
+    assign #(1) G[0] = (A & B);
     assign #(1) P[0] = A ^ B;
+
+    // incorporating carry in as bit -1
+    assign #(2) G[1][0] = G[0][0] | (Cin & P[0][0]);
 
     genvar i, level;
     generate
+        // iterate through every level
         for (level = 1; level <= $clog2(N); level++) begin 
+            // iterate through every n
             for (i=0; i < N; i++) begin
+                // if bit number i greater or equal than 2^(level - 1), then
+                // use KSA cell
+                // calculates propagate signal even when one isn't strictly
+                // necessary
                 if (i >= (1 << (level-1))) begin
                     assign #(2) G[level][i] = G[level-1][i] | (P[level-1][i] & G[level-1][i - (1 << (level-1))]);
                     assign #(1) P[level][i] = P[level-1][i] & P[level-1][i - (1 << (level-1))];
+                // otherwise use a buffer
                 end else begin 
                     assign G[level][i] = G[level-1][i];
                     assign P[level][i] = P[level-1][i];
@@ -32,8 +43,9 @@ module KSA #(parameter N = 8) (A,B, Cin, Cout,S);
             end
         end
     endgenerate
-
-    assign #(2) C[N:1] = G[$clog2(N)] | (P[$clog2(N)] & {N{Cin}});
+    
+    assign C[N:1] = G[$clog2(N)];
+    // assign #(2) C[N:1] = G[$clog2(N)] | (P[$clog2(N)] & {N{Cin}});
     assign #(1) S = C[N-1:0]^P[0];
     assign Cout = C[N];
 

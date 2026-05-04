@@ -1,7 +1,7 @@
 SRC = adder_tb
 test ?= 0
-start ?= 1
-stop ?= 2
+start ?= 2
+stop ?= 8
 step ?= 1
 dump ?= 0
 tests ?=  100

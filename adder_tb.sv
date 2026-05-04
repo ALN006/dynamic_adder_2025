@@ -56,6 +56,11 @@ module single_test #(parameter tests = 100, timeout = 200, N = 8, NAND_D = 1, XO
         initial $display("RCA instantiated as design under test");
     `endif
 
+    `ifdef KSA
+        KSA #(.N(N)) adder (.A(A), .B(B), .Cin(Cin), .Cout(Cout), .S(S));
+        initial $display("RCA instantiated as design under test");
+    `endif
+
     //testing
     reg  [N:0] expected_sum;
     integer latency;
@@ -74,16 +79,12 @@ module single_test #(parameter tests = 100, timeout = 200, N = 8, NAND_D = 1, XO
             //measure runtime
             while (({Cout, S} !== expected_sum) && (latency < timeout)) begin latency += 1; #1; end
             if (latency == timeout) begin
-                $display("ERROR: N = %0d, A = %0d, B = %0d, P = %0d, Cin = %0d, {Cout, S} = %0d, expected_sum = %0d, latency = %0d\n", N, A, B, P, Cin, {Cout, S}, expected_sum, latency);
+                $display("ERROR: N = %0d, A = %0d, B = %0d, P = %0d, Cin = %0d, {Cout, S} = %0b, expected_sum = %0d, latency = %0d\n", N, A, B, P, Cin, {Cout, S}, expected_sum, latency);
             end
 
             $fwrite(file, "%0d,%b,%b,%0d,%b,%b,%b,%0d\n", N, A, B, Cin, P, {Cout, S}, expected_sum, latency);
         end
         done = 1;
     end
-
-endmodule
-
-module async_test
 
 endmodule

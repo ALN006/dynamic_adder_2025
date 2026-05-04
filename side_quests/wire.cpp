@@ -1,19 +1,19 @@
-// TODO:    1. make copy constructor match assignment opperator
+// TODO:    1. consider using std::string instead of char*
+//          2. consider implementing a slice operator
 
 /*
     INTRO PARAGRAPH:
     This program defines a templated wire class for an event based C++ digital logic simulation library
-
 */
 
-// defining boolean operations
 #include <unordered_map>
 #include <stdexcept>
 
+// defining boolean operations
 std::unordered_map<char, char> operations[3] = {
     //and
     {
-        {(char)('0' + '0'), '0'},{(char)('0' + '1'), '0'},{(char)('1' + '1'), '1'},
+        {(char)('0' + '0'), '0'},{(char)('0' + '1'), '0'},{(char)('1' + '1'), '1'}, 
         {(char)('X' + 'X'), 'X'},{(char)('0' + 'X'), '0'},{(char)('1' + 'X'), 'X'},
         {(char)('X' + 'Z'), 'X'},{(char)('Z' + 'Z'), 'Z'},{(char)('Z' + '0'), '0'},
         {(char)('Z' + '1'), 'X'} 
@@ -47,11 +47,12 @@ std::unordered_map<char, char> operations[3] = {
 //              -> char ownership_       : 1 if object owns its value, else 0
 //
 // member_functions -> wire(char* val, component* start, component* end, int width) : normal constructor (blind trust attribute assignment)
-//                  -> void operator = (const wire& driver)                         : shallow copy, its like connecting 2 wires,there is no deep copy in this class as that doesnt make sense for a wire
+//                  -> wire& operator = (const wire& driver)                        : deep copy
+//                  -> void assign_driver(const wire& driver)                       : shallow copy
 //                  -> ~wire()                                                      : destructor deallocates value
 //                  -> getters                                                      : get_value(), get_start(), get_end(), get_width()
 //                  -> setters                                                      : set_value()
-//                  -> opperators                                                   : &, ~, | (boolean bitwise, returns values and not wires)
+//                  -> opperators                                                   : &, ~, | (boolean bitwise, returns values and not wires) (throws out of range error for invalid inputs)
 template <class component, class integer>
 class wire{
     private:
@@ -59,10 +60,10 @@ class wire{
         integer width_;
         component* start_;
         component* end_; 
-        char ownership_;
+        char ownership_; // 1 if owning, 0 if alias/connected
     public:
         // blind trust attribute assignment in constructor
-        wire(char* val, component* start, component* end, int width): start_(start), end_(end), width_(width), ownership_(1) {
+        wire(const char* val, component* start, component* end, integer width): start_(start), end_(end), width_(width), ownership_(1) {
             this->value_ = new char[width];
             for (integer i = 0; i < width; i++){ this->value_[i] = val[i]; }
         }
@@ -72,7 +73,7 @@ class wire{
             for (integer i = 0; i < this->width_; i++) { this->value_[i] = w.value_[i]; }
         }
 
-        ~wire(){ if(this->ownership_ == 1) { delete[] this->value_; } } //dtor
+        ~wire(){ if(this->ownership_ == 1) { delete[] this->value_; } } 
         
         // getters (shallow when returning pointers)
         const char* get_value() const { return value_; }
@@ -81,42 +82,52 @@ class wire{
         integer get_width() const { return width_; }
 
         //setter 
-        void set_value(char* new_value) { for (integer i = 0; i < this->width_; i++){ this->value_[i] = new_value[i]; } }
+        void set_value(const char* new_value) { 
+            if (this->ownership_ == 0) { throw std::logic_error("wire is connected to a designated driver"); }
+            for (integer i = 0; i < this->width_; i++){ this->value_[i] = new_value[i]; } 
+        }
 
-        // to connect wires, does not change start_ and end_
-        // note object should not outlive driver
-        wire& operator = (const wire& driver) {
-            if (this != &driver) {
-                if (this->width_ != driver.width_) { throw std::invalid_argument("Width mismatch in assignment"); }
-                if (this->ownership_ != 1) { throw std::logic_error("wire is already connected to a driver"); }
-                delete[] this->value_;
-                this->value_ = driver.value_; 
-                this->ownership_ = 0;
-            }
+        // same as copy constructor
+        wire& operator = (const wire& w) {
+            if (this->width_ != w.width_) { throw std::invalid_argument("Width mismatch in assignment"); }
+            if (this->ownership_ == 0) { throw std::logic_error("wire is connected to a designated driver"); }
+            for (integer i = 0; i < this->width_; i++) { this->value_[i] = w.value_[i]; }
             return *this;
         }
 
-        // bitwise opperators
+        //connect 2 wires
+        // note object should not outlive driver
+        void assign_driver(const wire& driver){
+            if (this != &driver) {
+                if (this->width_ != driver.width_) { throw std::invalid_argument("Width mismatch in assignment"); }
+                if (this->ownership_ == 0) { throw std::logic_error("wire is already connected to a designated driver"); }
+                delete[] this->value_;
+                this->value_ = driver.value_;
+                this->ownership_ = 0;
+            }
+        }
+
+        // bitwise opperators, throws out of range error for invalid inputs 
         wire operator & (const wire& w) const {
             if (this->width_ != w.width_) { throw std::invalid_argument("Width mismatch in &"); }
             char* tmp = new char[width_];
-            for (integer i = 0; i < width_; i++) { tmp[i] = operations[0][(char)(value_[i] + w.value_[i])]; }
-            wire res(tmp, NULL, NULL, width_);
+            for (integer i = 0; i < width_; i++) { tmp[i] = operations[0].at((char)(value_[i] + w.value_[i])); }
+            wire res = wire(tmp, NULL, NULL, width_);
             delete[] tmp; // res constructor makes its own copy
             return res;
         }
         wire operator ~ () const {
             char* tmp = new char[width_];
-            for (integer i = 0; i < width_; i++) { tmp[i] = operations[1][value_[i]]; }
-            wire res(tmp, NULL, NULL, width_);
+            for (integer i = 0; i < width_; i++) { tmp[i] = operations[1].at(value_[i]); }
+            wire res = wire(tmp, NULL, NULL, width_);
             delete[] tmp;
             return res;
         }
         wire operator | (const wire& w) const {
             if (this->width_ != w.width_) { throw std::invalid_argument("Width mismatch in |"); }
             char* tmp = new char[width_];
-            for (integer i = 0; i < width_; i++) { tmp[i] = operations[2][(char)(value_[i] + w.value_[i])]; }
-            wire res(tmp, NULL, NULL, width_);
+            for (integer i = 0; i < width_; i++) { tmp[i] = operations[2].at((char)(value_[i] + w.value_[i])); }
+            wire res = wire(tmp, NULL, NULL, width_);
             delete[] tmp;
             return res;
         }
